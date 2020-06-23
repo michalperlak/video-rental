@@ -21,7 +21,7 @@ class PricingCalculationsSpec : StringSpec({
         val price = calculator.computePrice(rental)
 
         // then
-        price shouldBe Price.of(120)
+        price shouldBe BASE_PREMIUM_PRICE * 3
     }
 
     "for regular movies price for the first 3 days should be equal to the base" {
@@ -37,7 +37,7 @@ class PricingCalculationsSpec : StringSpec({
             val price = calculator.computePrice(rental)
 
             // then
-            price shouldBe Price.of(30)
+            price shouldBe BASE_REGULAR_PRICE
         }
     }
 
@@ -56,7 +56,7 @@ class PricingCalculationsSpec : StringSpec({
             val price = calculator.computePrice(rental)
 
             // then
-            price shouldBe Price.of(30)
+            price shouldBe BASE_REGULAR_PRICE
         }
     }
 
@@ -68,7 +68,7 @@ class PricingCalculationsSpec : StringSpec({
         val price = calculator.computePrice(rental)
 
         // then
-        price shouldBe Price.of(90)
+        price shouldBe BASE_REGULAR_PRICE + BASE_REGULAR_PRICE * 2
     }
 
     "for old movies price for each day after the 5th should be equal to the base" {
@@ -79,7 +79,7 @@ class PricingCalculationsSpec : StringSpec({
         val price = calculator.computePrice(rental)
 
         // then
-        price shouldBe Price.of(90)
+        price shouldBe BASE_REGULAR_PRICE + BASE_REGULAR_PRICE * 2
     }
 
 })
