@@ -2,6 +2,8 @@ package pl.michalperlak.videorental.pricing
 
 import arrow.core.ListK
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.data.forAll
+import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import java.time.Duration
 
@@ -20,25 +22,61 @@ class PricingCalculationsSpec : StringSpec({
     }
 
     "for regular movies price for the first 3 days should be equal to the base" {
-        // given
-        val rental = regularMovie(duration = Duration.ofDays(3))
+        forAll(
+            row(Duration.ofDays(1)),
+            row(Duration.ofDays(2)),
+            row(Duration.ofDays(3))
+        ) {
+            // given
+            val rental = regularMovie(it)
 
-        // when
-        val price = calculator.computePrice(rental)
+            // when
+            val price = calculator.computePrice(rental)
 
-        // then
-        price shouldBe Price.of(30)
+            // then
+            price shouldBe Price.of(30)
+        }
     }
 
     "for old movies price for the first 5 days should be equal to the base" {
+        forAll(
+            row(Duration.ofDays(1)),
+            row(Duration.ofDays(2)),
+            row(Duration.ofDays(3)),
+            row(Duration.ofDays(4)),
+            row(Duration.ofDays(5))
+        ) {
+            // given
+            val rental = oldMovie(it)
+
+            // when
+            val price = calculator.computePrice(rental)
+
+            // then
+            price shouldBe Price.of(30)
+        }
+    }
+
+    "for regular movies price for each day after the 3rd should be equal to the base" {
         // given
-        val rental = oldMovie(duration = Duration.ofDays(5))
+        val rental = regularMovie(duration = Duration.ofDays(5))
 
         // when
         val price = calculator.computePrice(rental)
 
         // then
-        price shouldBe Price.of(30)
+        price shouldBe Price.of(90)
+    }
+
+    "for old movies price for each day after the 5th should be equal to the base" {
+        // given
+        val rental = oldMovie(duration = Duration.ofDays(7))
+
+        // when
+        val price = calculator.computePrice(rental)
+
+        // then
+        price shouldBe Price.of(90)
     }
 
 })

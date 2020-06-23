@@ -1,6 +1,6 @@
 package pl.michalperlak.videorental.pricing
 
-import kotlin.math.min
+import kotlin.math.max
 
 class PriceCalculator {
     fun computePrice(rental: Rental): Price =
@@ -12,8 +12,8 @@ class PriceCalculator {
         val days = duration.toDays()
         return when (movieType) {
             MovieType.NEW_RELEASE -> BASE_PREMIUM_PRICE * days
-            MovieType.REGULAR_MOVIE -> BASE_REGULAR_PRICE * min(days - 2, 1)
-            MovieType.OLD_MOVIE -> BASE_REGULAR_PRICE * min(days - 4, 1)
+            MovieType.REGULAR_MOVIE -> BASE_REGULAR_PRICE * max(days - 2, 1)
+            MovieType.OLD_MOVIE -> BASE_REGULAR_PRICE * max(days - 4, 1)
         }
     }
 
