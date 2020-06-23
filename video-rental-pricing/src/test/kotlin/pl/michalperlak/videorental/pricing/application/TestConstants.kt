@@ -1,4 +1,4 @@
-package pl.michalperlak.videorental.pricing.domain
+package pl.michalperlak.videorental.pricing.application
 
 import pl.michalperlak.videorental.pricing.domain.Price
 

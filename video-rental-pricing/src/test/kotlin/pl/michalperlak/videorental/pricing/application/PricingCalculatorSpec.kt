@@ -1,11 +1,13 @@
-package pl.michalperlak.videorental.pricing.domain
+package pl.michalperlak.videorental.pricing.application
 
 import arrow.core.ListK
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import pl.michalperlak.videorental.pricing.application.PriceCalculator
+import pl.michalperlak.videorental.pricing.domain.MovieType
+import pl.michalperlak.videorental.pricing.domain.Rental
+import pl.michalperlak.videorental.pricing.domain.RentalItem
 import java.time.Duration
 
 class PricingCalculationsSpec : StringSpec({
@@ -16,7 +18,8 @@ class PricingCalculationsSpec : StringSpec({
 
     "for new releases price should be equal to premium rate times number of days" {
         // given
-        val rental = newRelease(duration = Duration.ofDays(3))
+        val rental =
+            newRelease(duration = Duration.ofDays(3))
 
         // when
         val price = calculator.computePrice(rental)
@@ -63,7 +66,8 @@ class PricingCalculationsSpec : StringSpec({
 
     "for regular movies price for each day after the 3rd should be equal to the base" {
         // given
-        val rental = regularMovie(duration = Duration.ofDays(5))
+        val rental =
+            regularMovie(duration = Duration.ofDays(5))
 
         // when
         val price = calculator.computePrice(rental)
@@ -74,7 +78,8 @@ class PricingCalculationsSpec : StringSpec({
 
     "for old movies price for each day after the 5th should be equal to the base" {
         // given
-        val rental = oldMovie(duration = Duration.ofDays(7))
+        val rental =
+            oldMovie(duration = Duration.ofDays(7))
 
         // when
         val price = calculator.computePrice(rental)
@@ -85,7 +90,9 @@ class PricingCalculationsSpec : StringSpec({
 
     "for mixed types of movies should return the sum of all prices" {
         // given
-        val rental = newRelease(Duration.ofDays(2)) + regularMovie(Duration.ofDays(4)) + oldMovie(Duration.ofDays(6))
+        val rental = newRelease(Duration.ofDays(2)) + regularMovie(
+            Duration.ofDays(4)
+        ) + oldMovie(Duration.ofDays(6))
 
         // when
         val price = calculator.computePrice(rental)
