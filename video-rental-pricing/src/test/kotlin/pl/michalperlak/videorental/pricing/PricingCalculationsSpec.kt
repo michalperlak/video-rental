@@ -7,8 +7,11 @@ import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import java.time.Duration
 
+val BASE_PREMIUM_PRICE = Price.of(40)
+val BASE_REGULAR_PRICE = Price.of(30)
+
 class PricingCalculationsSpec : StringSpec({
-    val calculator = PriceCalculator()
+    val calculator = PriceCalculator(basePremiumPrice = BASE_PREMIUM_PRICE, baseRegularPrice = BASE_REGULAR_PRICE)
 
     "for new releases price should be equal to premium rate times number of days" {
         // given

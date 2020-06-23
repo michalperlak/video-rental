@@ -2,7 +2,7 @@ package pl.michalperlak.videorental.pricing
 
 import java.math.BigDecimal
 
-data class Price(
+data class Price internal constructor(
     private val amount: BigDecimal
 ) {
     operator fun plus(other: Price): Price = Price(amount + other.amount)
@@ -15,11 +15,6 @@ data class Price(
         fun of(value: Long): Price =
             Price(
                 amount = BigDecimal.valueOf(value).setScale(2)
-            )
-
-        fun of(value: String): Price =
-            Price(
-                amount = BigDecimal(value).setScale(2)
             )
     }
 }
