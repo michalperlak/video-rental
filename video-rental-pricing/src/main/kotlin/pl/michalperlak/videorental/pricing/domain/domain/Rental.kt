@@ -1,4 +1,4 @@
-package pl.michalperlak.videorental.pricing
+package pl.michalperlak.videorental.pricing.domain.domain
 
 import arrow.core.ListK
 import java.time.Duration

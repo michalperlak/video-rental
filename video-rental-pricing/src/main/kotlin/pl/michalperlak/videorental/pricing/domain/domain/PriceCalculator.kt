@@ -1,4 +1,4 @@
-package pl.michalperlak.videorental.pricing
+package pl.michalperlak.videorental.pricing.domain.domain
 
 import kotlin.math.max
 
@@ -15,8 +15,14 @@ class PriceCalculator(
         val days = duration.toDays()
         return when (movieType) {
             MovieType.NEW_RELEASE -> basePremiumPrice * days
-            MovieType.REGULAR_MOVIE -> baseRegularPrice * max(days - 2, 1)
-            MovieType.OLD_MOVIE -> baseRegularPrice * max(days - 4, 1)
+            MovieType.REGULAR_MOVIE -> baseRegularPrice * max(days - REGULAR_MOVIE_BONUS_DAYS, MIN_CHARGED_DAYS)
+            MovieType.OLD_MOVIE -> baseRegularPrice * max(days - OLD_MOVIE_BONUS_DAYS, MIN_CHARGED_DAYS)
         }
+    }
+
+    companion object {
+        private const val REGULAR_MOVIE_BONUS_DAYS = 2L
+        private const val OLD_MOVIE_BONUS_DAYS = 4L
+        private const val MIN_CHARGED_DAYS = 1L
     }
 }
