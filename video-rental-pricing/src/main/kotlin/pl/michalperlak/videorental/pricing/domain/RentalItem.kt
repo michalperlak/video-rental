@@ -1,4 +1,4 @@
-package pl.michalperlak.videorental.pricing.domain.domain
+package pl.michalperlak.videorental.pricing.domain
 
 import java.time.Duration
 

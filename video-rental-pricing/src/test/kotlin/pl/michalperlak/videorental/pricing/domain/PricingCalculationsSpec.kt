@@ -5,10 +5,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import pl.michalperlak.videorental.pricing.domain.domain.MovieType
-import pl.michalperlak.videorental.pricing.domain.domain.PriceCalculator
-import pl.michalperlak.videorental.pricing.domain.domain.Rental
-import pl.michalperlak.videorental.pricing.domain.domain.RentalItem
+import pl.michalperlak.videorental.pricing.application.PriceCalculator
 import java.time.Duration
 
 class PricingCalculationsSpec : StringSpec({
@@ -102,20 +99,29 @@ class PricingCalculationsSpec : StringSpec({
 private fun newRelease(duration: Duration): Rental =
     Rental(
         items = ListK.just(
-            RentalItem(MovieType.NEW_RELEASE, duration)
+            RentalItem(
+                MovieType.NEW_RELEASE,
+                duration
+            )
         )
     )
 
 private fun regularMovie(duration: Duration): Rental =
     Rental(
         items = ListK.just(
-            RentalItem(MovieType.REGULAR_MOVIE, duration)
+            RentalItem(
+                MovieType.REGULAR_MOVIE,
+                duration
+            )
         )
     )
 
 private fun oldMovie(duration: Duration): Rental =
     Rental(
         items = ListK.just(
-            RentalItem(MovieType.OLD_MOVIE, duration)
+            RentalItem(
+                MovieType.OLD_MOVIE,
+                duration
+            )
         )
     )
