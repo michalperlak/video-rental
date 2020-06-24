@@ -9,4 +9,6 @@ class InMemoryMoviesRepository : MoviesRepository {
 
     override fun addMovie(movie: Movie): Movie =
         movie.apply { movies[id] = this }
+
+    fun getAll(): List<Movie> = movies.values.toList()
 }
