@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import pl.michalperlak.videorental.pricing.domain.DelayedReturn
 import pl.michalperlak.videorental.pricing.domain.LateReturnedItem
 import pl.michalperlak.videorental.pricing.domain.MovieType
-import pl.michalperlak.videorental.pricing.domain.Price
 import java.time.Duration
 
 class AdditionalChargesCalculationsSpec : StringSpec({

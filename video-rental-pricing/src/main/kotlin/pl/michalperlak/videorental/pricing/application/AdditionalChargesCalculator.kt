@@ -17,9 +17,8 @@ class AdditionalChargesCalculator(
     private fun LateReturnedItem.delayFee(): Price {
         val delayDays = delay.toDays()
         return when (movieType) {
-            MovieType.REGULAR_MOVIE -> regularDelayFeeBase * delayDays
             MovieType.NEW_RELEASE -> premiumDelayFeeBase * delayDays
-            MovieType.OLD_MOVIE -> regularDelayFeeBase * delayDays
+            MovieType.REGULAR_MOVIE, MovieType.OLD_MOVIE -> regularDelayFeeBase * delayDays
         }
     }
 }
