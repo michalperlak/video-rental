@@ -6,10 +6,11 @@ import io.kotest.assertions.arrow.either.shouldBeRight
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import pl.michalperlak.videorental.inventory.dto.NewMovie
+import pl.michalperlak.videorental.inventory.error.ErrorAddingMovie
 import pl.michalperlak.videorental.inventory.error.MovieAlreadyExists
+import java.io.IOException
 import java.time.LocalDate
 import java.time.Month
 
@@ -55,14 +56,28 @@ class AddNewMovieSpec : StringSpec({
         val movieAddResult = inventory.addMovie(newMovie)
         assumeTrue(movieAddResult.isRight())
         val movieId = movieAddResult
-                .getOrElse { throw IllegalStateException() }
-                .id
+            .getOrElse { throw IllegalStateException() }
+            .id
 
         // when
         val result = inventory.addMovie(newMovie)
 
         // then
         result shouldBeLeft MovieAlreadyExists(movieId = movieId)
+    }
+
+    "should return error when cannot save movie in the repo" {
+        // given
+        val error = IOException("Infrastructure error")
+        val failingRepository = FailingMoviesRepository { error }
+        val inventoryWithFailingRepo = InventoryFacade(failingRepository)
+        val newMovie = NewMovie(title = "Test movie", releaseDate = LocalDate.of(2020, Month.JUNE, 24))
+
+        // when
+        val result = inventoryWithFailingRepo.addMovie(newMovie)
+
+        // then
+        result shouldBeLeft ErrorAddingMovie(error)
     }
 
 })
