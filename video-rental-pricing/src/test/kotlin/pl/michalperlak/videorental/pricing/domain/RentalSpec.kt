@@ -10,12 +10,9 @@ class RentalSpec : StringSpec({
 
     "result of the rentals sum should contain all the items" {
         // given
-        val rental1 =
-            Rental(items = listOf(NEW_RELEASE_RENTAL).k())
-        val rental2 =
-            Rental(items = listOf(REGULAR_MOVIE_RENTAL).k())
-        val rental3 =
-            Rental(items = listOf(OLD_MOVIE_RENTAL).k())
+        val rental1 = Rental(items = listOf(NEW_RELEASE_RENTAL).k())
+        val rental2 = Rental(items = listOf(REGULAR_MOVIE_RENTAL).k())
+        val rental3 = Rental(items = listOf(OLD_MOVIE_RENTAL).k())
 
         // when
         val sum = rental1 + rental2 + rental3

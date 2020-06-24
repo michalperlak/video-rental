@@ -46,6 +46,20 @@ class AdditionalChargesCalculationsSpec : StringSpec({
         delayCharge shouldBe BASE_REGULAR_DELAY_FEE * 5
     }
 
+    "for mixed types of movies should charge sum of all delay charges" {
+        // given
+        val delayedReturn =
+            newReleaseDelayedReturn(Duration.ofDays(1)) +
+                    regularMovieDelayedReturn(Duration.ofDays(2)) +
+                    oldMovieDelayedReturn(Duration.ofDays(3))
+
+        // when
+        val delayCharge = additionalChargesCalculator.compute(delayedReturn)
+
+        // then
+        delayCharge shouldBe (BASE_PREMIUM_DELAY_FEE) + (BASE_REGULAR_DELAY_FEE * 2) + (BASE_REGULAR_DELAY_FEE * 3)
+    }
+
 })
 
 private fun regularMovieDelayedReturn(delay: Duration): DelayedReturn =
