@@ -19,7 +19,7 @@ class AdditionalChargesCalculator(
         return when (movieType) {
             MovieType.REGULAR_MOVIE -> regularDelayFeeBase * delayDays
             MovieType.NEW_RELEASE -> premiumDelayFeeBase * delayDays
-            else -> Price.ZERO
+            MovieType.OLD_MOVIE -> regularDelayFeeBase * delayDays
         }
     }
 }

@@ -36,6 +36,17 @@ class AdditionalChargesCalculationsSpec : StringSpec({
         delayCharge shouldBe BASE_PREMIUM_DELAY_FEE * 3
     }
 
+    "for old movies should charge regular base for each extra day" {
+        // given
+        val delayedReturn = oldMovieDelayedReturn(Duration.ofDays(5))
+
+        // when
+        val delayCharge = additionalChargesCalculator.compute(delayedReturn)
+
+        // then
+        delayCharge shouldBe BASE_REGULAR_DELAY_FEE * 5
+    }
+
 })
 
 private fun regularMovieDelayedReturn(delay: Duration): DelayedReturn =
@@ -49,5 +60,12 @@ private fun newReleaseDelayedReturn(delay: Duration): DelayedReturn =
     DelayedReturn(
         items = ListK.just(
             LateReturnedItem(MovieType.NEW_RELEASE, delay)
+        )
+    )
+
+private fun oldMovieDelayedReturn(delay: Duration): DelayedReturn =
+    DelayedReturn(
+        items = ListK.just(
+            LateReturnedItem(MovieType.OLD_MOVIE, delay)
         )
     )
