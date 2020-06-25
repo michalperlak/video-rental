@@ -32,10 +32,11 @@ class InventoryFacade(
         }, errorHandler = { ErrorAddingMovie(it) })
 
     fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
-       newMovieCopy
-           .createMovieCopy(MovieCopyId.generate())
-           .toEither { TODO() }
-           .map { it.asDto() }
+        newMovieCopy
+            .createMovieCopy(MovieCopyId.generate())
+            .toEither { TODO() }
+            .map { movieCopiesRepository.addCopy(it) }
+            .map { it.asDto() }
 
     private fun registerMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         Either.right(

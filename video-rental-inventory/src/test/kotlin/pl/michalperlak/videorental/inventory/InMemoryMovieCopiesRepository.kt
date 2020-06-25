@@ -6,8 +6,10 @@ import pl.michalperlak.videorental.inventory.domain.MovieCopyId
 import java.util.concurrent.ConcurrentHashMap
 
 class InMemoryMovieCopiesRepository : MovieCopiesRepository {
-    private val values: MutableMap<MovieCopyId, MovieCopy> = ConcurrentHashMap()
+    private val copies: MutableMap<MovieCopyId, MovieCopy> = ConcurrentHashMap()
 
     override fun addCopy(movieCopy: MovieCopy): MovieCopy =
-        movieCopy.apply { values[id] = this }
+        movieCopy.apply { copies[id] = this }
+
+    fun getAll(): List<MovieCopy> = copies.values.toList()
 }
