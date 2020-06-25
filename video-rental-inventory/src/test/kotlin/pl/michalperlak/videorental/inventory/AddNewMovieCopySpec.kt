@@ -5,6 +5,7 @@ import io.kotest.assertions.arrow.either.shouldBeLeft
 import io.kotest.assertions.arrow.either.shouldBeRight
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSingleElement
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.string.beBlank
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -15,14 +16,18 @@ import pl.michalperlak.videorental.inventory.error.ErrorAddingMovieCopy
 import pl.michalperlak.videorental.inventory.error.InvalidMovieId
 import pl.michalperlak.videorental.inventory.error.MovieIdNotFound
 import java.io.IOException
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
+import java.time.ZoneOffset
 
 class AddNewMovieCopySpec : StringSpec({
 
     "should add movie copy and return its data" {
         // given
-        val inventory = createInventory()
+        val currentTime = Instant.ofEpochSecond(12345678)
+        val inventory = createInventory(clock = Clock.fixed(currentTime, ZoneOffset.UTC))
         val movieId = inventory.addMovie(title = "Test", releaseDate = LocalDate.of(2020, Month.JUNE, 25))
         val newMovieCopy = NewMovieCopy(movieId)
 
@@ -33,13 +38,17 @@ class AddNewMovieCopySpec : StringSpec({
         result shouldBeRight {
             it.copyId shouldNot beBlank()
             it.movieId shouldNot beBlank()
+            it.added shouldBe currentTime
         }
     }
 
     "should save copy in the repository" {
         // given
+        val currentTime = Instant.ofEpochSecond(12345678)
         val movieCopiesRepository = InMemoryMovieCopiesRepository()
-        val inventory = createInventory(movieCopiesRepository = movieCopiesRepository)
+        val inventory = createInventory(
+            movieCopiesRepository = movieCopiesRepository,
+            clock = Clock.fixed(currentTime, ZoneOffset.UTC))
         val movieId = inventory.addMovie(title = "Test movie", releaseDate = LocalDate.of(2020, Month.JUNE, 25))
         val newMovieCopy = NewMovieCopy(movieId)
 
@@ -49,7 +58,7 @@ class AddNewMovieCopySpec : StringSpec({
         // then
         val allRepoCopies = movieCopiesRepository.getAll()
         allRepoCopies shouldHaveSingleElement {
-            it.movieId.toString() == movieId
+            it.movieId.toString() == movieId && it.added == currentTime
         }
     }
 

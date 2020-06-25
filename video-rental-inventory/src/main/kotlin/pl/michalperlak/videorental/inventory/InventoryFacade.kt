@@ -22,10 +22,13 @@ import pl.michalperlak.videorental.inventory.mapper.asDto
 import pl.michalperlak.videorental.inventory.mapper.createMovie
 import pl.michalperlak.videorental.inventory.mapper.createMovieCopy
 import pl.michalperlak.videorental.inventory.util.execute
+import java.time.Clock
+import java.time.Instant
 
 class InventoryFacade(
     private val moviesRepository: MoviesRepository,
-    private val movieCopiesRepository: MovieCopiesRepository
+    private val movieCopiesRepository: MovieCopiesRepository,
+    private val clock: Clock
 ) {
     fun addMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         execute({
@@ -38,7 +41,7 @@ class InventoryFacade(
     fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
         execute({
             newMovieCopy
-                .createMovieCopy(MovieCopyId.generate())
+                .createMovieCopy(MovieCopyId.generate(), Instant.now(clock))
                 .toEither { InvalidMovieId(newMovieCopy.movieId) }
                 .filterOrOther(predicate = { movieExists(it.movieId) }) {
                     MovieIdNotFound(it.movieId.toString())
