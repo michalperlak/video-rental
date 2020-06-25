@@ -9,9 +9,11 @@ import io.kotest.matchers.shouldNot
 import io.kotest.matchers.string.beBlank
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import pl.michalperlak.videorental.inventory.domain.MovieId
 import pl.michalperlak.videorental.inventory.dto.NewMovie
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
 import pl.michalperlak.videorental.inventory.error.InvalidMovieId
+import pl.michalperlak.videorental.inventory.error.MovieIdNotFound
 import java.time.LocalDate
 import java.time.Month
 import java.util.UUID
@@ -62,6 +64,19 @@ class AddNewMovieCopySpec : StringSpec({
 
         // then
         result shouldBeLeft InvalidMovieId(movieId)
+    }
+
+    "should return error when movie id does not exist" {
+        // given
+        val inventory = createInventory()
+        val movieId = MovieId.generate().toString()
+        val newMovieCopy = NewMovieCopy(movieId)
+
+        // when
+        val result = inventory.addNewCopy(newMovieCopy)
+        
+        // then
+        result shouldBeLeft MovieIdNotFound(movieId)
     }
 })
 

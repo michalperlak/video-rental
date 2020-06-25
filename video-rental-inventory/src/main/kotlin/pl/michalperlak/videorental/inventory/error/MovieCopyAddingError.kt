@@ -5,3 +5,7 @@ sealed class MovieCopyAddingError
 data class InvalidMovieId(
     val movieId: String
 ) : MovieCopyAddingError()
+
+data class MovieIdNotFound(
+    val movieId: String
+) : MovieCopyAddingError()

@@ -13,6 +13,8 @@ class InMemoryMoviesRepository : MoviesRepository {
     override fun addMovie(movie: Movie): Movie =
         movie.apply { movies[id] = this }
 
+    override fun findById(movieId: MovieId): Option<Movie> = Option.fromNullable(movies[movieId])
+
     override fun findMovie(title: String, releaseDate: LocalDate): Option<Movie> =
         Option.fromNullable(
             movies.values.firstOrNull { it.title == title && it.releaseDate == releaseDate }
