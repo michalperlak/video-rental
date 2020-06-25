@@ -1,6 +1,7 @@
 package pl.michalperlak.videorental.inventory
 
 import arrow.core.getOrElse
+import io.kotest.assertions.arrow.either.shouldBeLeft
 import io.kotest.assertions.arrow.either.shouldBeRight
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSingleElement
@@ -10,8 +11,10 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import pl.michalperlak.videorental.inventory.dto.NewMovie
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
+import pl.michalperlak.videorental.inventory.error.InvalidMovieId
 import java.time.LocalDate
 import java.time.Month
+import java.util.UUID
 
 class AddNewMovieCopySpec : StringSpec({
 
@@ -46,6 +49,19 @@ class AddNewMovieCopySpec : StringSpec({
         allRepoCopies shouldHaveSingleElement {
             it.movieId.toString() == movieId
         }
+    }
+
+    "should return error when movie id is incorrect" {
+        // given
+        val inventory = createInventory()
+        val movieId = "123456"
+        val newMovieCopy = NewMovieCopy(movieId)
+
+        // when
+        val result = inventory.addNewCopy(newMovieCopy)
+
+        // then
+        result shouldBeLeft InvalidMovieId(movieId)
     }
 })
 

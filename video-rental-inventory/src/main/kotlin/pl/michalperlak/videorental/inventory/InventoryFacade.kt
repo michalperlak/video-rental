@@ -11,6 +11,7 @@ import pl.michalperlak.videorental.inventory.dto.MovieCopy
 import pl.michalperlak.videorental.inventory.dto.NewMovie
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
 import pl.michalperlak.videorental.inventory.error.ErrorAddingMovie
+import pl.michalperlak.videorental.inventory.error.InvalidMovieId
 import pl.michalperlak.videorental.inventory.error.MovieAddingError
 import pl.michalperlak.videorental.inventory.error.MovieAlreadyExists
 import pl.michalperlak.videorental.inventory.error.MovieCopyAddingError
@@ -34,7 +35,7 @@ class InventoryFacade(
     fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
         newMovieCopy
             .createMovieCopy(MovieCopyId.generate())
-            .toEither { TODO() }
+            .toEither { InvalidMovieId(newMovieCopy.movieId) }
             .map { movieCopiesRepository.addCopy(it) }
             .map { it.asDto() }
 

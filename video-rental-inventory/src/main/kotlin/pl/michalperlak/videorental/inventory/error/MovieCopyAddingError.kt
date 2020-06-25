@@ -1,5 +1,7 @@
 package pl.michalperlak.videorental.inventory.error
 
-class MovieCopyAddingError {
+sealed class MovieCopyAddingError
 
-}
+data class InvalidMovieId(
+    val movieId: String
+) : MovieCopyAddingError()
