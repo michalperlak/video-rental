@@ -12,6 +12,7 @@ import pl.michalperlak.videorental.inventory.dto.MovieCopy
 import pl.michalperlak.videorental.inventory.dto.NewMovie
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
 import pl.michalperlak.videorental.inventory.error.ErrorAddingMovie
+import pl.michalperlak.videorental.inventory.error.ErrorAddingMovieCopy
 import pl.michalperlak.videorental.inventory.error.InvalidMovieId
 import pl.michalperlak.videorental.inventory.error.MovieAddingError
 import pl.michalperlak.videorental.inventory.error.MovieAlreadyExists
@@ -35,14 +36,16 @@ class InventoryFacade(
         }, errorHandler = { ErrorAddingMovie(it) })
 
     fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
-        newMovieCopy
-            .createMovieCopy(MovieCopyId.generate())
-            .toEither { InvalidMovieId(newMovieCopy.movieId) }
-            .filterOrOther(predicate = { movieExists(it.movieId) }) {
-                MovieIdNotFound(it.movieId.toString())
-            }
-            .map { movieCopiesRepository.addCopy(it) }
-            .map { it.asDto() }
+        execute({
+            newMovieCopy
+                .createMovieCopy(MovieCopyId.generate())
+                .toEither { InvalidMovieId(newMovieCopy.movieId) }
+                .filterOrOther(predicate = { movieExists(it.movieId) }) {
+                    MovieIdNotFound(it.movieId.toString())
+                }
+                .map { movieCopiesRepository.addCopy(it) }
+                .map { it.asDto() }
+        }, errorHandler = { ErrorAddingMovieCopy(it) })
 
     private fun registerMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         Either.right(

@@ -9,3 +9,7 @@ data class InvalidMovieId(
 data class MovieIdNotFound(
     val movieId: String
 ) : MovieCopyAddingError()
+
+data class ErrorAddingMovieCopy(
+    val error: Throwable
+) : MovieCopyAddingError()
