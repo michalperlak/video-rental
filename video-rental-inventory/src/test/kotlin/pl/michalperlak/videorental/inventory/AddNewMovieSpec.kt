@@ -15,11 +15,10 @@ import java.time.LocalDate
 import java.time.Month
 
 class AddNewMovieSpec : StringSpec({
-    val moviesRepository = InMemoryMoviesRepository()
-    val inventory = createInventory(moviesRepository = moviesRepository)
 
     "should add movie and return its data" {
         // given
+        val inventory = createInventory()
         val title = "Test movie"
         val releaseDate = LocalDate.of(2020, Month.JUNE, 24)
         val newMovie = NewMovie(title = title, releaseDate = releaseDate)
@@ -36,6 +35,8 @@ class AddNewMovieSpec : StringSpec({
 
     "should save the movie in the repository" {
         // given
+        val moviesRepository = InMemoryMoviesRepository()
+        val inventory = createInventory(moviesRepository = moviesRepository)
         val title = "Movie"
         val releaseDate = LocalDate.of(2020, Month.JUNE, 24)
         val newMovie = NewMovie(title = title, releaseDate = releaseDate)
@@ -52,6 +53,7 @@ class AddNewMovieSpec : StringSpec({
 
     "should return error when movie already registered" {
         // given
+        val inventory = createInventory()
         val newMovie = NewMovie(title = "Test", releaseDate = LocalDate.of(2020, Month.JUNE, 24))
         val movieAddResult = inventory.addMovie(newMovie)
         assumeTrue(movieAddResult.isRight())
