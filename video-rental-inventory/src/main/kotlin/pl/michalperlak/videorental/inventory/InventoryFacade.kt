@@ -1,6 +1,7 @@
 package pl.michalperlak.videorental.inventory
 
 import arrow.core.Either
+import arrow.core.Option
 import arrow.core.filterOrOther
 import arrow.core.getOrElse
 import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
@@ -37,6 +38,12 @@ internal class InventoryFacade(
                 .map { movieAlreadyRegistered(it.id) }
                 .getOrElse { registerMovie(newMovie) }
         }, errorHandler = { ErrorAddingMovie(it) })
+
+    fun getMovie(movieId: String): Option<Movie> =
+        MovieId
+            .from(movieId)
+            .flatMap { moviesRepository.findById(it) }
+            .map { it.asDto() }
 
     fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
         execute({

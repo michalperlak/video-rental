@@ -1,6 +1,5 @@
 package pl.michalperlak.videorental.inventory
 
-import arrow.core.getOrElse
 import io.kotest.assertions.arrow.either.shouldBeLeft
 import io.kotest.assertions.arrow.either.shouldBeRight
 import io.kotest.core.spec.style.StringSpec
@@ -8,9 +7,7 @@ import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.string.beBlank
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import pl.michalperlak.videorental.inventory.domain.MovieId
-import pl.michalperlak.videorental.inventory.dto.NewMovie
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
 import pl.michalperlak.videorental.inventory.error.ErrorAddingMovieCopy
 import pl.michalperlak.videorental.inventory.error.InvalidMovieId
@@ -118,11 +115,3 @@ class AddNewMovieCopySpec : StringSpec({
         result shouldBeLeft ErrorAddingMovieCopy(error)
     }
 })
-
-private fun InventoryFacade.addMovie(title: String, releaseDate: LocalDate): String {
-    val addMovieResult = addMovie(NewMovie(title, releaseDate))
-    assumeTrue(addMovieResult.isRight())
-    return addMovieResult
-        .getOrElse { throw IllegalStateException() }
-        .id
-}
