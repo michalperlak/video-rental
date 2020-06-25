@@ -57,6 +57,12 @@ internal class InventoryFacade(
                 .map { it.asDto() }
         }, errorHandler = { ErrorAddingMovieCopy(it) })
 
+    fun getCopy(copyId: String): Option<MovieCopy> =
+        MovieCopyId
+            .from(copyId)
+            .flatMap { movieCopiesRepository.findById(it) }
+            .map { it.asDto() }
+
     private fun registerMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         Either.right(
             moviesRepository
