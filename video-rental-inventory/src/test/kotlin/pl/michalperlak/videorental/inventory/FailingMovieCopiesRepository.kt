@@ -3,7 +3,7 @@ package pl.michalperlak.videorental.inventory
 import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
 import pl.michalperlak.videorental.inventory.domain.MovieCopy
 
-class FailingMovieCopiesRepository(
+internal class FailingMovieCopiesRepository(
     private val errorProducer: () -> Throwable
 ) : MovieCopiesRepository {
 

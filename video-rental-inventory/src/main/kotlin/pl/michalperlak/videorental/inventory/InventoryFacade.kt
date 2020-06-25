@@ -25,7 +25,7 @@ import pl.michalperlak.videorental.inventory.util.execute
 import java.time.Clock
 import java.time.Instant
 
-class InventoryFacade(
+internal class InventoryFacade(
     private val moviesRepository: MoviesRepository,
     private val movieCopiesRepository: MovieCopiesRepository,
     private val clock: Clock

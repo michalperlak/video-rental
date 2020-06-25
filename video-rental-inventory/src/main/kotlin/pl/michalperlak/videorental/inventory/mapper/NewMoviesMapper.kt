@@ -4,4 +4,5 @@ import pl.michalperlak.videorental.inventory.domain.Movie
 import pl.michalperlak.videorental.inventory.domain.MovieId
 import pl.michalperlak.videorental.inventory.dto.NewMovie
 
-fun NewMovie.createMovie(movieId: MovieId): Movie = Movie(id = movieId, title = title, releaseDate = releaseDate)
+internal fun NewMovie.createMovie(movieId: MovieId): Movie =
+    Movie(id = movieId, title = title, releaseDate = releaseDate)

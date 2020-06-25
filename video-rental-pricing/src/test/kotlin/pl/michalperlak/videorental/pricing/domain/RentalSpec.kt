@@ -24,15 +24,15 @@ class RentalSpec : StringSpec({
 
 })
 
-val NEW_RELEASE_RENTAL = RentalItem(
+internal val NEW_RELEASE_RENTAL = RentalItem(
     MovieType.NEW_RELEASE,
     Duration.ofDays(1)
 )
-val REGULAR_MOVIE_RENTAL = RentalItem(
+internal val REGULAR_MOVIE_RENTAL = RentalItem(
     MovieType.REGULAR_MOVIE,
     Duration.ofDays(1)
 )
-val OLD_MOVIE_RENTAL = RentalItem(
+internal val OLD_MOVIE_RENTAL = RentalItem(
     MovieType.OLD_MOVIE,
     Duration.ofDays(1)
 )

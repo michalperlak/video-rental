@@ -6,7 +6,7 @@ import pl.michalperlak.videorental.pricing.domain.Rental
 import pl.michalperlak.videorental.pricing.domain.RentalItem
 import kotlin.math.max
 
-class PriceCalculator(
+internal class PriceCalculator(
     private val basePremiumPrice: Price,
     private val baseRegularPrice: Price
 ) {

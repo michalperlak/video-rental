@@ -4,7 +4,7 @@ import arrow.core.Option
 import arrow.core.nonFatalOrThrow
 import java.util.UUID
 
-data class MovieId internal constructor(
+internal data class MovieId internal constructor(
     private val id: UUID
 ) {
     override fun toString(): String = id.toString()

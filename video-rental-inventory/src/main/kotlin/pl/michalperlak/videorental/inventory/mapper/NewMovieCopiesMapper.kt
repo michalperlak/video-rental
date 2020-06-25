@@ -7,7 +7,7 @@ import pl.michalperlak.videorental.inventory.domain.MovieId
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
 import java.time.Instant
 
-fun NewMovieCopy.createMovieCopy(copyId: MovieCopyId, additionTimestamp: Instant): Option<MovieCopy> =
+internal fun NewMovieCopy.createMovieCopy(copyId: MovieCopyId, additionTimestamp: Instant): Option<MovieCopy> =
     MovieId
         .from(movieId)
         .map { MovieCopy(copyId, it, additionTimestamp) }

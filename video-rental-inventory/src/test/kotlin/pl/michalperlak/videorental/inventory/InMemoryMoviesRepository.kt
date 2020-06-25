@@ -7,7 +7,7 @@ import pl.michalperlak.videorental.inventory.domain.MoviesRepository
 import java.time.LocalDate
 import java.util.concurrent.ConcurrentHashMap
 
-class InMemoryMoviesRepository : MoviesRepository {
+internal class InMemoryMoviesRepository : MoviesRepository {
     private val movies: MutableMap<MovieId, Movie> = ConcurrentHashMap()
 
     override fun addMovie(movie: Movie): Movie =

@@ -1,5 +1,5 @@
 package pl.michalperlak.videorental.inventory.domain
 
-interface MovieCopiesRepository {
+internal interface MovieCopiesRepository {
     fun addCopy(movieCopy: MovieCopy): MovieCopy
 }

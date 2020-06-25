@@ -27,15 +27,15 @@ class DelayedReturnSpec : StringSpec({
     }
 })
 
-val NEW_RELEASE_RETURNED_LATE = LateReturnedItem(
+internal val NEW_RELEASE_RETURNED_LATE = LateReturnedItem(
     MovieType.NEW_RELEASE,
     Duration.ofDays(1)
 )
-val REGULAR_MOVIE_RETURNED_LATE = LateReturnedItem(
+internal val REGULAR_MOVIE_RETURNED_LATE = LateReturnedItem(
     MovieType.REGULAR_MOVIE,
     Duration.ofDays(2)
 )
-val OLD_MOVIE_RETURNED_LATE = LateReturnedItem(
+internal val OLD_MOVIE_RETURNED_LATE = LateReturnedItem(
     MovieType.OLD_MOVIE,
     Duration.ofDays(3)
 )
