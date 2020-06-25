@@ -2,20 +2,28 @@ package pl.michalperlak.videorental.inventory
 
 import arrow.core.Either
 import arrow.core.getOrElse
+import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
+import pl.michalperlak.videorental.inventory.domain.MovieCopyId
+import pl.michalperlak.videorental.inventory.domain.MovieId
 import pl.michalperlak.videorental.inventory.domain.MoviesRepository
+import pl.michalperlak.videorental.inventory.dto.Movie
+import pl.michalperlak.videorental.inventory.dto.MovieCopy
 import pl.michalperlak.videorental.inventory.dto.NewMovie
+import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
 import pl.michalperlak.videorental.inventory.error.ErrorAddingMovie
 import pl.michalperlak.videorental.inventory.error.MovieAddingError
 import pl.michalperlak.videorental.inventory.error.MovieAlreadyExists
+import pl.michalperlak.videorental.inventory.error.MovieCopyAddingError
 import pl.michalperlak.videorental.inventory.mapper.asDto
 import pl.michalperlak.videorental.inventory.mapper.createMovie
+import pl.michalperlak.videorental.inventory.mapper.createMovieCopy
 import pl.michalperlak.videorental.inventory.util.execute
-import pl.michalperlak.videorental.inventory.dto.Movie as MovieDto
 
 class InventoryFacade(
-    private val moviesRepository: MoviesRepository
+    private val moviesRepository: MoviesRepository,
+    private val movieCopiesRepository: MovieCopiesRepository
 ) {
-    fun addMovie(newMovie: NewMovie): Either<MovieAddingError, MovieDto> =
+    fun addMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         execute({
             moviesRepository
                 .findMovie(newMovie.title, newMovie.releaseDate)
@@ -23,13 +31,19 @@ class InventoryFacade(
                 .getOrElse { registerMovie(newMovie) }
         }, errorHandler = { ErrorAddingMovie(it) })
 
-    private fun registerMovie(newMovie: NewMovie): Either<MovieAddingError, MovieDto> =
+    fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
+       newMovieCopy
+           .createMovieCopy(MovieCopyId.generate())
+           .toEither { TODO() }
+           .map { it.asDto() }
+
+    private fun registerMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         Either.right(
             moviesRepository
                 .addMovie(newMovie.createMovie(movieId = MovieId.generate()))
                 .asDto()
         )
 
-    private fun movieAlreadyRegistered(movieId: MovieId): Either<MovieAddingError, MovieDto> =
+    private fun movieAlreadyRegistered(movieId: MovieId): Either<MovieAddingError, Movie> =
         Either.left(MovieAlreadyExists(movieId.toString()))
 }

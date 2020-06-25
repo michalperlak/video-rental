@@ -2,6 +2,7 @@ package pl.michalperlak.videorental.inventory
 
 import arrow.core.Option
 import pl.michalperlak.videorental.inventory.domain.Movie
+import pl.michalperlak.videorental.inventory.domain.MovieId
 import pl.michalperlak.videorental.inventory.domain.MoviesRepository
 import java.time.LocalDate
 import java.util.concurrent.ConcurrentHashMap

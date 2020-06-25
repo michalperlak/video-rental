@@ -16,7 +16,7 @@ import java.time.Month
 
 class AddNewMovieSpec : StringSpec({
     val moviesRepository = InMemoryMoviesRepository()
-    val inventory = InventoryFacade(moviesRepository)
+    val inventory = createInventory(moviesRepository = moviesRepository)
 
     "should add movie and return its data" {
         // given
@@ -70,7 +70,7 @@ class AddNewMovieSpec : StringSpec({
         // given
         val error = IOException("Infrastructure error")
         val failingRepository = FailingMoviesRepository { error }
-        val inventoryWithFailingRepo = InventoryFacade(failingRepository)
+        val inventoryWithFailingRepo = createInventory(moviesRepository = failingRepository)
         val newMovie = NewMovie(title = "Test movie", releaseDate = LocalDate.of(2020, Month.JUNE, 24))
 
         // when
