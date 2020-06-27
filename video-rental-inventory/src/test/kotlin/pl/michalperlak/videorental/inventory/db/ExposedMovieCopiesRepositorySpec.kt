@@ -1,5 +1,6 @@
 package pl.michalperlak.videorental.inventory.db
 
+import io.kotest.assertions.arrow.option.shouldBeSome
 import io.kotest.matchers.longs.shouldBeExactly
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
@@ -40,6 +41,18 @@ class ExposedMovieCopiesRepositorySpec : InMemoryDatabaseSpec(tables = listOf(Mo
     }
 
     "should find movie copy by id" {
+        // given
+        val copy = MovieCopy(
+            id = MovieCopyId.generate(),
+            movieId = MovieId.generate(),
+            added = Instant.ofEpochMilli(25678902)
+        )
+        movieCopiesRepository.addCopy(copy)
 
+        // when
+        val result = movieCopiesRepository.findById(copy.id)
+
+        // then
+        result shouldBeSome copy
     }
 })
