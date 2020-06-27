@@ -9,6 +9,8 @@ internal data class MovieId internal constructor(
 ) {
     override fun toString(): String = id.toString()
 
+    fun asUUID(): UUID = id
+
     companion object {
         fun generate(): MovieId =
             MovieId(UUID.randomUUID())
