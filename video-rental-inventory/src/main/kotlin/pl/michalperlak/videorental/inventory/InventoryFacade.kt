@@ -30,8 +30,8 @@ internal class InventoryFacade(
     private val moviesRepository: MoviesRepository,
     private val movieCopiesRepository: MovieCopiesRepository,
     private val clock: Clock
-) {
-    fun addMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
+) : Inventory {
+    override fun addMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         execute({
             moviesRepository
                 .findMovie(newMovie.title, newMovie.releaseDate)
@@ -39,13 +39,13 @@ internal class InventoryFacade(
                 .getOrElse { registerMovie(newMovie) }
         }, errorHandler = { ErrorAddingMovie(it) })
 
-    fun getMovie(movieId: String): Option<Movie> =
+    override fun getMovie(movieId: String): Option<Movie> =
         MovieId
             .from(movieId)
             .flatMap { moviesRepository.findById(it) }
             .map { it.asDto() }
 
-    fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
+    override fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
         execute({
             newMovieCopy
                 .createMovieCopy(MovieCopyId.generate(), Instant.now(clock))
@@ -57,7 +57,7 @@ internal class InventoryFacade(
                 .map { it.asDto() }
         }, errorHandler = { ErrorAddingMovieCopy(it) })
 
-    fun getCopy(copyId: String): Option<MovieCopy> =
+    override fun getCopy(copyId: String): Option<MovieCopy> =
         MovieCopyId
             .from(copyId)
             .flatMap { movieCopiesRepository.findById(it) }
