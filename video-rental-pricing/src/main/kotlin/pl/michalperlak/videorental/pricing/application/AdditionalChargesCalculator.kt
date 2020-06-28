@@ -5,7 +5,7 @@ import pl.michalperlak.videorental.pricing.domain.LateReturnedItem
 import pl.michalperlak.videorental.pricing.domain.MovieType
 import pl.michalperlak.videorental.pricing.domain.Price
 
-class AdditionalChargesCalculator(
+internal class AdditionalChargesCalculator(
     private val regularDelayFeeBase: Price,
     private val premiumDelayFeeBase: Price
 ) {
