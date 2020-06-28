@@ -1,38 +1,40 @@
 package pl.michalperlak.videorental.inventory
 
 import arrow.core.Either
+import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.filterOrOther
 import arrow.core.getOrElse
+import pl.michalperlak.videorental.inventory.application.MovieRentalService
 import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
 import pl.michalperlak.videorental.inventory.domain.MovieCopyId
 import pl.michalperlak.videorental.inventory.domain.MovieId
 import pl.michalperlak.videorental.inventory.domain.MoviesRepository
 import pl.michalperlak.videorental.inventory.dto.Movie
 import pl.michalperlak.videorental.inventory.dto.MovieCopy
+import pl.michalperlak.videorental.inventory.dto.MovieToRent
 import pl.michalperlak.videorental.inventory.dto.NewMovie
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
-import pl.michalperlak.videorental.inventory.error.ErrorAddingMovie
-import pl.michalperlak.videorental.inventory.error.ErrorAddingMovieCopy
-import pl.michalperlak.videorental.inventory.error.InvalidMovieId
-import pl.michalperlak.videorental.inventory.error.MovieAddingError
-import pl.michalperlak.videorental.inventory.error.MovieAlreadyExists
-import pl.michalperlak.videorental.inventory.error.MovieCopyAddingError
-import pl.michalperlak.videorental.inventory.error.MovieIdNotFound
+import pl.michalperlak.videorental.inventory.dto.Rental
+import pl.michalperlak.videorental.inventory.error.*
 import pl.michalperlak.videorental.inventory.mapper.asDto
 import pl.michalperlak.videorental.inventory.mapper.createMovie
 import pl.michalperlak.videorental.inventory.mapper.createMovieCopy
-import pl.michalperlak.videorental.inventory.util.execute
+import pl.michalperlak.videorental.inventory.mapper.toRentalItem
+import pl.michalperlak.videorental.inventory.util.executeAndHandle
+import pl.michalperlak.videorental.inventory.util.executeForEither
+import pl.michalperlak.videorental.inventory.util.flatMapOption
 import java.time.Clock
 import java.time.Instant
 
 internal class InventoryFacade(
     private val moviesRepository: MoviesRepository,
     private val movieCopiesRepository: MovieCopiesRepository,
+    private val movieRentalService: MovieRentalService,
     private val clock: Clock
 ) : Inventory {
     override fun addMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
-        execute({
+        executeForEither({
             moviesRepository
                 .findMovie(newMovie.title, newMovie.releaseDate)
                 .map { movieAlreadyRegistered(it.id) }
@@ -46,7 +48,7 @@ internal class InventoryFacade(
             .map { it.asDto() }
 
     override fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy> =
-        execute({
+        executeForEither({
             newMovieCopy
                 .createMovieCopy(MovieCopyId.generate(), Instant.now(clock))
                 .toEither { InvalidMovieId(newMovieCopy.movieId) }
@@ -62,6 +64,18 @@ internal class InventoryFacade(
             .from(copyId)
             .flatMap { movieCopiesRepository.findById(it) }
             .map { it.asDto() }
+
+    override fun rentMovies(movies: ListK<MovieToRent>): Either<RentalInventoryError, Rental> =
+        executeAndHandle({
+            movieRentalService
+                .rent(movies.flatMapOption(MovieToRent::toRentalItem))
+                .asDto()
+        }, errorHandler = {
+            when (it) {
+                is CopiesNotAvailableException -> CopiesNotAvailable(it.movieId)
+                else -> ErrorRentingCopies(it)
+            }
+        })
 
     private fun registerMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
         Either.right(

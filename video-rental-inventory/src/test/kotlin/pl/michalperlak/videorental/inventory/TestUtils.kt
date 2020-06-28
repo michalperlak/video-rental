@@ -2,6 +2,8 @@ package pl.michalperlak.videorental.inventory
 
 import arrow.core.getOrElse
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import pl.michalperlak.videorental.inventory.application.DefaultMovieRentalService
+import pl.michalperlak.videorental.inventory.application.MovieRentalService
 import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
 import pl.michalperlak.videorental.inventory.domain.MoviesRepository
 import pl.michalperlak.videorental.inventory.dto.NewMovie
@@ -12,9 +14,10 @@ import java.time.LocalDate
 internal fun createInventory(
     moviesRepository: MoviesRepository = InMemoryMoviesRepository(),
     movieCopiesRepository: MovieCopiesRepository = InMemoryMovieCopiesRepository(),
+    movieRentalService: MovieRentalService = DefaultMovieRentalService(movieCopiesRepository, DummyTransactionsHandler),
     clock: Clock = Clock.systemUTC()
 ): InventoryFacade =
-    InventoryFacade(moviesRepository, movieCopiesRepository, clock)
+    InventoryFacade(moviesRepository, movieCopiesRepository, movieRentalService, clock)
 
 internal fun InventoryFacade.addMovie(title: String, releaseDate: LocalDate): String {
     val addMovieResult = addMovie(NewMovie(title, releaseDate))

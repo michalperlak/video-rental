@@ -16,6 +16,10 @@ internal class FailingMovieCopiesRepository(
         throw errorProducer()
     }
 
+    override fun updateCopy(movieCopy: MovieCopy): MovieCopy {
+        throw errorProducer()
+    }
+
     override fun findById(copyId: MovieCopyId): Option<MovieCopy> {
         throw errorProducer()
     }

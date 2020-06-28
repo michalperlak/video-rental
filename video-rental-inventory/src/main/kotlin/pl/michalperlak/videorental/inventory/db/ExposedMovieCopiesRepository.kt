@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
 import pl.michalperlak.videorental.inventory.domain.MovieCopy
 import pl.michalperlak.videorental.inventory.domain.MovieCopyId
@@ -23,6 +24,17 @@ internal class ExposedMovieCopiesRepository(
     override fun addCopy(movieCopy: MovieCopy): MovieCopy = transaction(database) {
         movieCopy.apply {
             MovieCopies.insert {
+                it[id] = movieCopy.id.asUUID()
+                it[movieId] = movieCopy.movieId.asUUID()
+                it[added] = movieCopy.added.toEpochMilli()
+                it[status] = movieCopy.status
+            }
+        }
+    }
+
+    override fun updateCopy(movieCopy: MovieCopy): MovieCopy = transaction(database) {
+        movieCopy.apply {
+            MovieCopies.update(where = { MovieCopies.id.eq(movieCopy.id.asUUID()) }) {
                 it[id] = movieCopy.id.asUUID()
                 it[movieId] = movieCopy.movieId.asUUID()
                 it[added] = movieCopy.added.toEpochMilli()
