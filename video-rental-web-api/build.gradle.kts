@@ -27,5 +27,11 @@ dependencies {
     testImplementation("io.kotest", "kotest-runner-junit5-jvm", kotestVersion)
     testImplementation("io.kotest", "kotest-assertions-core-jvm", kotestVersion)
     testImplementation("io.kotest", "kotest-assertions-arrow-jvm", kotestVersion)
+    testImplementation("io.kotest", "kotest-extensions-spring", kotestVersion)
+    testImplementation("org.springframework.boot", "spring-boot-starter-test")
+    testImplementation("io.rest-assured", "rest-assured", restAssuredVersion)
+    testImplementation("io.rest-assured", "rest-assured-common", restAssuredVersion)
+    testImplementation("io.rest-assured", "json-path", restAssuredVersion)
+    testImplementation("io.rest-assured", "xml-path", restAssuredVersion)
     testImplementation("io.rest-assured", "kotlin-extensions", restAssuredVersion)
 }
