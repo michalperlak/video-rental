@@ -7,6 +7,7 @@ import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.string.beBlank
+import pl.michalperlak.videorental.inventory.domain.MovieCopyStatus
 import pl.michalperlak.videorental.inventory.domain.MovieId
 import pl.michalperlak.videorental.inventory.dto.NewMovieCopy
 import pl.michalperlak.videorental.inventory.error.ErrorAddingMovieCopy
@@ -35,6 +36,7 @@ class AddNewMovieCopySpec : StringSpec({
         result shouldBeRight {
             it.copyId shouldNot beBlank()
             it.movieId shouldNot beBlank()
+            it.status shouldBe MovieCopyStatus.AVAILABLE.name
             it.added shouldBe currentTime
         }
     }
@@ -45,7 +47,8 @@ class AddNewMovieCopySpec : StringSpec({
         val movieCopiesRepository = InMemoryMovieCopiesRepository()
         val inventory = createInventory(
             movieCopiesRepository = movieCopiesRepository,
-            clock = Clock.fixed(currentTime, ZoneOffset.UTC))
+            clock = Clock.fixed(currentTime, ZoneOffset.UTC)
+        )
         val movieId = inventory.addMovie(title = "Test movie", releaseDate = LocalDate.of(2020, Month.JUNE, 25))
         val newMovieCopy = NewMovieCopy(movieId)
 
