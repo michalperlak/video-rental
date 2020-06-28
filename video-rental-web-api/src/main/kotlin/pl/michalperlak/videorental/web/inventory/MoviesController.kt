@@ -1,9 +1,12 @@
 package pl.michalperlak.videorental.web.inventory
 
+import arrow.core.getOrElse
 import arrow.core.getOrHandle
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,12 +24,21 @@ import java.net.URI
 class MoviesController(
     private val inventory: Inventory
 ) {
-
     @PostMapping
     fun addMovie(@RequestBody newMovie: NewMovie): ResponseEntity<*> = inventory
         .addMovie(newMovie)
         .map { created(it.id) }
         .getOrHandle { errorAddingMovie(it) }
+
+    @GetMapping("/{movieId}")
+    fun getMovie(@PathVariable movieId: String): ResponseEntity<*> = inventory
+        .getMovie(movieId)
+        .map { ResponseEntity.ok(it) }
+        .getOrElse {
+            ResponseEntity
+                .notFound()
+                .build()
+        }
 
     private fun errorAddingMovie(error: MovieAddingError): ResponseEntity<Any> =
         when (error) {
@@ -41,10 +53,10 @@ class MoviesController(
                     .build()
         }
 
-    private fun created(id: String): ResponseEntity<*> =
+    private fun created(id: String): ResponseEntity<Any> =
         ResponseEntity
             .created(URI.create("$MOVIES_PATH/$id"))
-            .build<Any>()
+            .build()
 
     companion object {
         const val MOVIES_PATH = "/api/movies"

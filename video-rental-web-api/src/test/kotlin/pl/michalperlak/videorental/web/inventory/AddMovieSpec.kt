@@ -3,7 +3,6 @@ package pl.michalperlak.videorental.web.inventory
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.spring.SpringListener
-import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
@@ -64,7 +63,7 @@ class AddMovieSpec : StringSpec() {
                         "releaseDate": "2020-06-25"
                     }
                 """.trimIndent()
-            val location = addMovie(body)
+            val location = addMovie(port, body)
             Given {
                 port(port)
                 body(body)
@@ -77,17 +76,6 @@ class AddMovieSpec : StringSpec() {
             }
         }
     }
-
-    private fun addMovie(newMovieBody: String): String =
-        Given {
-            port(port)
-            body(newMovieBody)
-            header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        } When {
-            post(MoviesController.MOVIES_PATH)
-        } Extract {
-            header(HttpHeaders.LOCATION)
-        }
 
     override fun listeners(): List<TestListener> = listOf(SpringListener)
 }
