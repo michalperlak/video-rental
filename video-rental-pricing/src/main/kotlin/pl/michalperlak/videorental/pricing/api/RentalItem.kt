@@ -1,8 +1,8 @@
-package pl.michalperlak.videorental.pricing.domain
+package pl.michalperlak.videorental.pricing.api
 
 import java.time.Duration
 
-internal data class RentalItem(
+data class RentalItem(
     val movieType: MovieType,
     val duration: Duration
 )

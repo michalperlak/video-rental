@@ -1,4 +1,4 @@
-package pl.michalperlak.videorental.pricing.domain
+package pl.michalperlak.videorental.pricing.api
 
 import arrow.core.k
 import io.kotest.core.spec.style.StringSpec

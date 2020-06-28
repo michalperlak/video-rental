@@ -1,9 +1,9 @@
-package pl.michalperlak.videorental.pricing.domain
+package pl.michalperlak.videorental.pricing.api
 
 import arrow.core.ListK
 import arrow.core.combineK
 
-internal data class DelayedReturn(
+data class DelayedReturn(
     val items: ListK<LateReturnedItem>
 ) {
     operator fun plus(other: DelayedReturn): DelayedReturn =

@@ -5,9 +5,9 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import pl.michalperlak.videorental.pricing.domain.MovieType
-import pl.michalperlak.videorental.pricing.domain.Rental
-import pl.michalperlak.videorental.pricing.domain.RentalItem
+import pl.michalperlak.videorental.pricing.api.MovieType
+import pl.michalperlak.videorental.pricing.api.Rental
+import pl.michalperlak.videorental.pricing.api.RentalItem
 import java.time.Duration
 
 class PricingCalculationsSpec : StringSpec({
