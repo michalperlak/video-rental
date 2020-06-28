@@ -16,6 +16,9 @@ internal class InMemoryMovieCopiesRepository : MovieCopiesRepository {
     override fun addCopy(movieCopy: MovieCopy): MovieCopy =
         movieCopy.apply { copies[id] = this }
 
+    override fun updateCopy(movieCopy: MovieCopy): MovieCopy =
+        movieCopy.apply { copies[id] = this }
+
     override fun findById(copyId: MovieCopyId): Option<MovieCopy> = Option.fromNullable(copies[copyId])
 
     override fun findByMovieAndStatus(movieId: MovieId, status: MovieCopyStatus): SequenceK<MovieCopy> =

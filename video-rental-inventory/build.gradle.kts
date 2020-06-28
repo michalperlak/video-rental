@@ -11,6 +11,8 @@ val h2Version: String by project
 val flywayVersion: String by project
 
 dependencies {
+    implementation(project(":video-rental-common"))
+
     implementation(kotlin("stdlib"))
     implementation("io.arrow-kt", "arrow-core", arrowVersion)
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)

@@ -44,6 +44,31 @@ class ExposedMovieCopiesRepositorySpec : InMemoryDatabaseSpec(tables = listOf(Mo
         records shouldBeExactly 1
     }
 
+    "should update movie copy in the database" {
+        // given
+        val timestampEpochMillis = 123456789L
+        val copy = MovieCopy(
+            id = MovieCopyId.generate(),
+            movieId = MovieId.generate(),
+            added = Instant.ofEpochMilli(timestampEpochMillis),
+            status = MovieCopyStatus.AVAILABLE
+        )
+        movieCopiesRepository.addCopy(copy)
+        val updatedCopy = copy.copy(status = MovieCopyStatus.RENTED)
+
+        // when
+        movieCopiesRepository.updateCopy(updatedCopy)
+
+        // then
+        val count = transaction(database) {
+            MovieCopies.select {
+                MovieCopies.id.eq(copy.id.asUUID())
+                    .and(MovieCopies.status.eq(MovieCopyStatus.RENTED))
+            }.count()
+        }
+        count shouldBeExactly  1
+    }
+
     "should find movie copy by id" {
         // given
         val copy = MovieCopy(
