@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import pl.michalperlak.videorental.web.inventory.MoviesController.Companion.MOVIES_PATH
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class AddMovieSpec : StringSpec() {
@@ -33,10 +34,10 @@ class AddMovieSpec : StringSpec() {
                 )
                 header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             } When {
-                post(MoviesController.MOVIES_PATH)
+                post(MOVIES_PATH)
             } Then {
                 statusCode(201)
-                header("location", startsWith(MoviesController.MOVIES_PATH))
+                header("location", startsWith(MOVIES_PATH))
             }
         }
 
@@ -50,7 +51,7 @@ class AddMovieSpec : StringSpec() {
                 )
                 header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             } When {
-                post(MoviesController.MOVIES_PATH)
+                post(MOVIES_PATH)
             } Then {
                 statusCode(400)
             }
@@ -63,16 +64,16 @@ class AddMovieSpec : StringSpec() {
                         "releaseDate": "2020-06-25"
                     }
                 """.trimIndent()
-            val location = addMovie(port, body)
+            val movieId = addMovie(port, body)
             Given {
                 port(port)
                 body(body)
                 header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             } When {
-                post(MoviesController.MOVIES_PATH)
+                post(MOVIES_PATH)
             } Then {
                 statusCode(409)
-                header(HttpHeaders.LOCATION, location)
+                header(HttpHeaders.LOCATION, "$MOVIES_PATH/$movieId")
             }
         }
     }

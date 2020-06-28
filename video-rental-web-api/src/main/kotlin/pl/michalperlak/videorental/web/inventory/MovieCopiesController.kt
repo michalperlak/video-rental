@@ -1,8 +1,11 @@
 package pl.michalperlak.videorental.web.inventory
 
+import arrow.core.getOrElse
 import arrow.core.getOrHandle
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -26,6 +29,16 @@ class MovieCopiesController(
         .addNewCopy(movieCopy)
         .map { created(it.copyId) }
         .getOrHandle { errorAddingCopy(it) }
+
+    @GetMapping("/{copyId}")
+    fun getCopy(@PathVariable copyId: String): ResponseEntity<*> = inventory
+        .getCopy(copyId)
+        .map { ResponseEntity.ok(it) }
+        .getOrElse {
+            ResponseEntity
+                .notFound()
+                .build()
+        }
 
     private fun errorAddingCopy(error: MovieCopyAddingError): ResponseEntity<Any> =
         when (error) {

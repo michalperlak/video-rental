@@ -19,6 +19,7 @@ fun addMovie(port: Int, newMovieBody: String): String =
         post(MoviesController.MOVIES_PATH)
     } Extract {
         header(HttpHeaders.LOCATION)
+            .substringAfter(MoviesController.MOVIES_PATH + "/")
     }
 
 val mapper: ObjectMapper = ObjectMapper()
