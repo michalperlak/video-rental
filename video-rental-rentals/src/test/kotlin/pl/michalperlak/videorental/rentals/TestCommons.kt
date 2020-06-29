@@ -67,13 +67,15 @@ internal fun addRental(
             }
         )
     )
-    val rental = NewRental(listOf(rentalItem).k())
+    val rental = NewRental(createCustomerId(), listOf(rentalItem).k())
     val result = rentals.newRental(rental)
     assumeTrue(result.isRight())
     return result
         .getOrElse { throw IllegalStateException() }
         .rentalId
 }
+
+internal fun createCustomerId(): String = UUID.randomUUID().toString()
 
 internal fun createMovieId(): String = UUID.randomUUID().toString()
 

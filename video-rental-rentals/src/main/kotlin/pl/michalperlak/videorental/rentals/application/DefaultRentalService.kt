@@ -34,6 +34,7 @@ internal class DefaultRentalService(
     override fun registerRental(rentalRequest: NewRental, inventoryRental: InventoryRental): Rental {
         val rental = Rental(
             id = RentalId.generate(),
+            customerId = rentalRequest.customerId,
             startDate = LocalDate.now(clock),
             items = inventoryRental
                 .copies

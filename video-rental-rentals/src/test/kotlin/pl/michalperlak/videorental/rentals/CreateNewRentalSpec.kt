@@ -30,6 +30,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
+import java.util.UUID
 
 class CreateNewRentalSpec : StringSpec({
 
@@ -40,6 +41,7 @@ class CreateNewRentalSpec : StringSpec({
         every { inventory.rentMovies(any()) } returns Either.left(CopiesNotAvailable(movieId))
         val rentals = createRentals(inventory)
         val rental = NewRental(
+            createCustomerId(),
             listOf(NewRentalItem(movieId, Duration.ofDays(2))).k()
         )
 
@@ -58,6 +60,7 @@ class CreateNewRentalSpec : StringSpec({
         every { inventory.rentMovies(any()) } returns Either.left(ErrorRentingCopies(error))
         val rentals = createRentals(inventory)
         val rental = NewRental(
+            createCustomerId(),
             listOf(NewRentalItem(movieId, Duration.ofDays(10))).k()
         )
 
@@ -100,7 +103,7 @@ class CreateNewRentalSpec : StringSpec({
                 ).k()
             )
         )
-        val rental = NewRental(listOf(oldMovieItem, regularMovieItem, newReleaseItem).k())
+        val rental = NewRental("", listOf(oldMovieItem, regularMovieItem, newReleaseItem).k())
 
         // when
         val result = rentals.newRental(rental)
@@ -143,8 +146,7 @@ class CreateNewRentalSpec : StringSpec({
                 ).k()
             )
         )
-
-        val rental = NewRental(listOf(oldMovieItem, regularMovieItem, newReleaseItem).k())
+        val rental = NewRental(createCustomerId(), listOf(oldMovieItem, regularMovieItem, newReleaseItem).k())
 
         // when
         val result = rentals.newRental(rental)
@@ -181,7 +183,7 @@ class CreateNewRentalSpec : StringSpec({
                 ).k()
             )
         )
-        val rental = NewRental(listOf(rentalItem).k())
+        val rental = NewRental(createCustomerId(), listOf(rentalItem).k())
 
         // when
         rentals.newRental(rental)
@@ -211,7 +213,7 @@ class CreateNewRentalSpec : StringSpec({
                 ).k()
             )
         )
-        val rental = NewRental(listOf(rentalItem).k())
+        val rental = NewRental(createCustomerId(), listOf(rentalItem).k())
 
         // when
         val result = rentals.newRental(rental)

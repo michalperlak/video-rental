@@ -6,6 +6,7 @@ import java.time.LocalDate
 
 data class Rental(
     val rentalId: String,
+    val customerId: String,
     val startDate: LocalDate,
     val items: ListK<RentedMovieCopy>
 ) {
