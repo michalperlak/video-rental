@@ -9,7 +9,6 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import pl.michalperlak.videorental.inventory.Inventory
@@ -30,7 +29,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
-import java.util.UUID
 
 class CreateNewRentalSpec : StringSpec({
 
@@ -221,7 +219,3 @@ class CreateNewRentalSpec : StringSpec({
         result shouldBeLeft ErrorCreatingRental(error)
     }
 })
-
-private fun createMovieId(): String = UUID.randomUUID().toString()
-
-private fun createCopyId(): String = UUID.randomUUID().toString()

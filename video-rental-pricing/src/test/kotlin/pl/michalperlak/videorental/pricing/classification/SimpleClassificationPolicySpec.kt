@@ -4,7 +4,6 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import pl.michalperlak.videorental.pricing.api.MovieType
 import java.time.Clock
-import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month

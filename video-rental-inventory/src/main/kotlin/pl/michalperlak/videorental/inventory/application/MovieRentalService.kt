@@ -1,7 +1,6 @@
 package pl.michalperlak.videorental.inventory.application
 
 import arrow.core.ListK
-import pl.michalperlak.videorental.inventory.domain.MovieCopy
 import pl.michalperlak.videorental.inventory.domain.MovieCopyId
 import pl.michalperlak.videorental.inventory.domain.Rental
 import pl.michalperlak.videorental.inventory.domain.RentalItem
