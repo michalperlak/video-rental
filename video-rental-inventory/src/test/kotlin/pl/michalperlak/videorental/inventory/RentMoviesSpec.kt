@@ -36,7 +36,8 @@ class RentMoviesSpec : StringSpec({
     "should rent requested movies and return the rental data" {
         // given
         val inventory = createInventory()
-        val movieId = inventory.addMovie("Test movie 2", LocalDate.of(2020, Month.JUNE, 27))
+        val movieReleaseDate = LocalDate.of(2020, Month.JUNE, 27)
+        val movieId = inventory.addMovie("Test movie 2", movieReleaseDate)
         val copyId1 = inventory.addNewCopy(movieId)
         val copyId2 = inventory.addNewCopy(movieId)
         val moviesToRent = listOf(MovieToRent(movieId = movieId, copies = 2)).k()
@@ -48,7 +49,8 @@ class RentMoviesSpec : StringSpec({
         result shouldBeRight {
             it.copies shouldHaveSize 2
             it.copies shouldContainAll listOf(
-                RentedCopy(copyId = copyId1, movieId = movieId), RentedCopy(copyId = copyId2, movieId = movieId)
+                RentedCopy(copyId = copyId1, movieId = movieId, movieReleaseDate = movieReleaseDate),
+                RentedCopy(copyId = copyId2, movieId = movieId, movieReleaseDate = movieReleaseDate)
             )
         }
     }

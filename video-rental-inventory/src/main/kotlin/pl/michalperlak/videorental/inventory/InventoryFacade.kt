@@ -26,6 +26,7 @@ import pl.michalperlak.videorental.inventory.util.executeForEither
 import pl.michalperlak.videorental.inventory.util.flatMapOption
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 
 internal class InventoryFacade(
     private val moviesRepository: MoviesRepository,
@@ -69,7 +70,7 @@ internal class InventoryFacade(
         executeAndHandle({
             movieRentalService
                 .rent(movies.flatMapOption(MovieToRent::toRentalItem))
-                .asDto()
+                .asDto { movieReleaseDate(it) }
         }, errorHandler = {
             when (it) {
                 is CopiesNotAvailableException -> CopiesNotAvailable(it.movieId)
@@ -91,4 +92,10 @@ internal class InventoryFacade(
         moviesRepository
             .findById(movieId)
             .isDefined()
+
+    private fun movieReleaseDate(movieId: MovieId): LocalDate =
+        moviesRepository
+            .findById(movieId)
+            .map { it.releaseDate }
+            .getOrElse { throw IllegalStateException("Movie not found: $movieId") }
 }
