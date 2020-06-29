@@ -8,6 +8,8 @@ import java.time.Period
 interface MovieClassificationPolicy {
     fun classify(movieReleaseDate: LocalDate): MovieType
 
-    fun default(newReleaseMaxAge: Period, oldMovieMinAge: Period, clock: Clock): MovieClassificationPolicy =
-        SimpleMovieClassificationPolicy(newReleaseMaxAge, oldMovieMinAge, clock)
+    companion object {
+        fun default(newReleaseMaxAge: Period, oldMovieMinAge: Period, clock: Clock): MovieClassificationPolicy =
+            SimpleMovieClassificationPolicy(newReleaseMaxAge, oldMovieMinAge, clock)
+    }
 }

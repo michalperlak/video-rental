@@ -5,6 +5,7 @@ import pl.michalperlak.videorental.pricing.api.Price
 import java.time.LocalDate
 
 data class Rental(
+    val rentalId: String,
     val startDate: LocalDate,
     val items: ListK<RentedMovieCopy>
 ) {

@@ -3,18 +3,30 @@ package pl.michalperlak.videorental.rentals
 import arrow.core.Either
 import arrow.core.k
 import io.kotest.assertions.arrow.either.shouldBeLeft
+import io.kotest.assertions.arrow.either.shouldBeRight
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import pl.michalperlak.videorental.inventory.Inventory
+import pl.michalperlak.videorental.inventory.dto.Rental
+import pl.michalperlak.videorental.inventory.dto.RentedCopy
 import pl.michalperlak.videorental.inventory.error.CopiesNotAvailable
 import pl.michalperlak.videorental.inventory.error.ErrorRentingCopies
+import pl.michalperlak.videorental.pricing.api.Price
 import pl.michalperlak.videorental.rentals.dto.NewRental
 import pl.michalperlak.videorental.rentals.dto.NewRentalItem
+import pl.michalperlak.videorental.rentals.dto.RentedMovieCopy
 import pl.michalperlak.videorental.rentals.error.InventoryError
 import pl.michalperlak.videorental.rentals.error.MovieNotAvailable
+import java.time.Clock
 import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
+import java.time.ZoneOffset
 import java.util.UUID
 
 class CreateNewRentalSpec : StringSpec({
@@ -53,6 +65,93 @@ class CreateNewRentalSpec : StringSpec({
         // then
         result shouldBeLeft InventoryError(error)
     }
+
+    "should create rental with correct total price" {
+        // given
+        val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
+        val inventory = mockk<Inventory>()
+        val rentals = createRentals(inventory,
+            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC)))
+        val oldMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(5))
+        val regularMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(4))
+        val newReleaseItem = NewRentalItem(createMovieId(), Duration.ofDays(2))
+        every { inventory.rentMovies(any()) } returns Either.right(
+            Rental(
+                copies = listOf(
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = oldMovieItem.movieId,
+                        movieReleaseDate = LocalDate.of(1990, Month.JULY, 23)
+                    ),
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = regularMovieItem.movieId,
+                        movieReleaseDate = LocalDate.of(2017, Month.AUGUST, 15)
+                    ),
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = newReleaseItem.movieId,
+                        movieReleaseDate = LocalDate.of(2020, Month.JUNE, 27)
+                    )
+                ).k()
+            )
+        )
+        val rental = NewRental(listOf(oldMovieItem, regularMovieItem, newReleaseItem).k())
+
+        // when
+        val result = rentals.newRental(rental)
+
+        // then
+        result shouldBeRight {
+            it.totalPrice shouldBe Price.of(170)
+        }
+    }
+
+    "should create rental with correct price for each item" {
+        // given
+        val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
+        val inventory = mockk<Inventory>()
+        val rentals = createRentals(inventory,
+            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC)))
+        val oldMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(7))
+        val regularMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(4))
+        val newReleaseItem = NewRentalItem(createMovieId(), Duration.ofDays(5))
+        every { inventory.rentMovies(any()) } returns Either.right(
+            Rental(
+                copies = listOf(
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = oldMovieItem.movieId,
+                        movieReleaseDate = LocalDate.of(1995, Month.OCTOBER, 23)
+                    ),
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = regularMovieItem.movieId,
+                        movieReleaseDate = LocalDate.of(2017, Month.APRIL, 6)
+                    ),
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = newReleaseItem.movieId,
+                        movieReleaseDate = LocalDate.of(2020, Month.JUNE, 27)
+                    )
+                ).k()
+            )
+        )
+
+        val rental = NewRental(listOf(oldMovieItem, regularMovieItem, newReleaseItem).k())
+
+        // when
+        val result = rentals.newRental(rental)
+
+        // then
+        result shouldBeRight {
+            it.items shouldHaveSize 3
+            it.items.map(RentedMovieCopy::price) shouldContainAll
+                    listOf(Price.of(90), Price.of(60), Price.of(200))
+        }
+    }
 })
 
 private fun createMovieId(): String = UUID.randomUUID().toString()
+
+private fun createCopyId(): String = UUID.randomUUID().toString()
