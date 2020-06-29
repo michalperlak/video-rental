@@ -23,7 +23,6 @@ internal class DefaultMovieRentalService(
         transactionsHandler.inTransaction(isolation = TransactionIsolation.REPEATABLE_READ) {
             rentalItems
                 .flatMap(this::getCopies)
-                .map { moviesCopiesRepository.updateCopy(it.copy(status = MovieCopyStatus.RENTED)) }
                 .let { Rental(it) }
         }
 
@@ -42,6 +41,7 @@ internal class DefaultMovieRentalService(
             .toList()
             .k()
             .ensureCopiesAvailable(rentalItem.movieId, rentalItem.copies)
+            .map { moviesCopiesRepository.updateCopy(it.copy(status = MovieCopyStatus.RENTED)) }
 
     private fun ListK<MovieCopy>.ensureCopiesAvailable(movieId: MovieId, copies: Int): ListK<MovieCopy> =
         if (size < copies) {

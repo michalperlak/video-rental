@@ -11,6 +11,8 @@ data class Price internal constructor(
     operator fun times(factor: Long): Price =
         Price(amount * BigDecimal.valueOf(factor))
 
+    fun format(): String = amount.toPlainString()
+
     companion object {
         val ZERO = of(0)
 
