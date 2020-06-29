@@ -1,4 +1,4 @@
-package pl.michalperlak.videorental.rentals
+package pl.michalperlak.videorental.rentals.infr
 
 import pl.michalperlak.videorental.rentals.domain.Return
 import pl.michalperlak.videorental.rentals.domain.ReturnId

@@ -18,6 +18,8 @@ import pl.michalperlak.videorental.rentals.domain.RentalsRepository
 import pl.michalperlak.videorental.rentals.domain.ReturnsRepository
 import pl.michalperlak.videorental.rentals.dto.NewRental
 import pl.michalperlak.videorental.rentals.dto.NewRentalItem
+import pl.michalperlak.videorental.rentals.infr.InMemoryRentalsRepository
+import pl.michalperlak.videorental.rentals.infr.InMemoryReturnsRepository
 import java.time.Clock
 import java.time.Duration
 import java.time.LocalDate

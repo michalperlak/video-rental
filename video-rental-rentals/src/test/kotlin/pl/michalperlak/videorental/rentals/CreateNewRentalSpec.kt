@@ -23,6 +23,7 @@ import pl.michalperlak.videorental.rentals.dto.RentedMovieCopy
 import pl.michalperlak.videorental.rentals.error.ErrorCreatingRental
 import pl.michalperlak.videorental.rentals.error.InventoryError
 import pl.michalperlak.videorental.rentals.error.MovieNotAvailable
+import pl.michalperlak.videorental.rentals.infr.InMemoryRentalsRepository
 import java.time.Clock
 import java.time.Duration
 import java.time.LocalDate

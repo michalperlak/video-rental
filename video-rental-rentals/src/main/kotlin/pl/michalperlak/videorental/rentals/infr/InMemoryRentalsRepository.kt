@@ -1,4 +1,4 @@
-package pl.michalperlak.videorental.rentals
+package pl.michalperlak.videorental.rentals.infr
 
 import arrow.core.Option
 import pl.michalperlak.videorental.rentals.domain.Rental

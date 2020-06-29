@@ -13,7 +13,9 @@ val restAssuredVersion: String by project
 dependencies {
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
+    implementation(project(":video-rental-pricing"))
     implementation(project(":video-rental-inventory"))
+    implementation(project(":video-rental-rentals"))
 
     implementation(kotlin("stdlib"))
     implementation("io.arrow-kt", "arrow-core", arrowVersion)

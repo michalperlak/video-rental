@@ -17,6 +17,7 @@ import pl.michalperlak.videorental.rentals.domain.RentalId
 import pl.michalperlak.videorental.rentals.error.CopiesNotRecognized
 import pl.michalperlak.videorental.rentals.error.ErrorDuringReturn
 import pl.michalperlak.videorental.rentals.error.RentalNotRecognized
+import pl.michalperlak.videorental.rentals.infr.InMemoryReturnsRepository
 import java.io.IOException
 import java.time.Duration
 import java.time.LocalDate
