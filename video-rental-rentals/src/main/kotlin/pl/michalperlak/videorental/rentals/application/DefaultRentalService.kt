@@ -6,6 +6,7 @@ import pl.michalperlak.videorental.pricing.classification.MovieClassificationPol
 import pl.michalperlak.videorental.rentals.domain.Rental
 import pl.michalperlak.videorental.rentals.domain.RentalId
 import pl.michalperlak.videorental.rentals.domain.RentalItem
+import pl.michalperlak.videorental.rentals.domain.RentalsRepository
 import pl.michalperlak.videorental.rentals.dto.NewRental
 import java.time.Clock
 import java.time.Duration
@@ -16,10 +17,11 @@ import pl.michalperlak.videorental.pricing.api.RentalItem as PricingRentalItem
 internal class DefaultRentalService(
     private val prices: Prices,
     private val classificationPolicy: MovieClassificationPolicy,
+    private val rentalsRepository: RentalsRepository,
     private val clock: Clock
 ) : RentalService {
     override fun registerRental(rentalRequest: NewRental, inventoryRental: InventoryRental): Rental {
-        return Rental(
+        val rental = Rental(
             id = RentalId.generate(),
             startDate = LocalDate.now(clock),
             items = inventoryRental
@@ -36,6 +38,7 @@ internal class DefaultRentalService(
                     )
                 }
         )
+        return rentalsRepository.addRental(rental)
     }
 
     private fun matchDuration(

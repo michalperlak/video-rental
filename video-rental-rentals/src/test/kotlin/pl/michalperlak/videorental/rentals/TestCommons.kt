@@ -25,7 +25,7 @@ internal fun createRentalsService(
         OLD_MOVIE_MIN_AGE,
         clock
     )
-): RentalService = DefaultRentalService(prices, classificationPolicy, clock)
+): RentalService = DefaultRentalService(prices, classificationPolicy, rentalsRepository, clock)
 
 internal fun createRentals(
     inventory: Inventory,

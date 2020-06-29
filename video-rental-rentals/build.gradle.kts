@@ -12,6 +12,7 @@ val kotestVersion: String by project
 val mockkVersion: String by project
 
 dependencies {
+    implementation(project(":video-rental-common"))
     implementation(project(":video-rental-pricing"))
     implementation(project(":video-rental-inventory"))
 

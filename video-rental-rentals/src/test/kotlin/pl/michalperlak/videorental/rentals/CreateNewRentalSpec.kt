@@ -6,8 +6,10 @@ import io.kotest.assertions.arrow.either.shouldBeLeft
 import io.kotest.assertions.arrow.either.shouldBeRight
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import pl.michalperlak.videorental.inventory.Inventory
@@ -19,6 +21,7 @@ import pl.michalperlak.videorental.pricing.api.Price
 import pl.michalperlak.videorental.rentals.dto.NewRental
 import pl.michalperlak.videorental.rentals.dto.NewRentalItem
 import pl.michalperlak.videorental.rentals.dto.RentedMovieCopy
+import pl.michalperlak.videorental.rentals.error.ErrorCreatingRental
 import pl.michalperlak.videorental.rentals.error.InventoryError
 import pl.michalperlak.videorental.rentals.error.MovieNotAvailable
 import java.time.Clock
@@ -70,8 +73,10 @@ class CreateNewRentalSpec : StringSpec({
         // given
         val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
         val inventory = mockk<Inventory>()
-        val rentals = createRentals(inventory,
-            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC)))
+        val rentals = createRentals(
+            inventory,
+            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC))
+        )
         val oldMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(5))
         val regularMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(4))
         val newReleaseItem = NewRentalItem(createMovieId(), Duration.ofDays(2))
@@ -111,8 +116,10 @@ class CreateNewRentalSpec : StringSpec({
         // given
         val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
         val inventory = mockk<Inventory>()
-        val rentals = createRentals(inventory,
-            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC)))
+        val rentals = createRentals(
+            inventory,
+            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC))
+        )
         val oldMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(7))
         val regularMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(4))
         val newReleaseItem = NewRentalItem(createMovieId(), Duration.ofDays(5))
@@ -149,6 +156,69 @@ class CreateNewRentalSpec : StringSpec({
             it.items.map(RentedMovieCopy::price) shouldContainAll
                     listOf(Price.of(90), Price.of(60), Price.of(200))
         }
+    }
+
+    "should save rental in the repository" {
+        // given
+        val rentalsRepository = InMemoryRentalsRepository()
+        val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
+        val inventory = mockk<Inventory>()
+        val rentals = createRentals(
+            inventory,
+            createRentalsService(
+                rentalsRepository = rentalsRepository,
+                clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC)
+            )
+        )
+        val rentalItem = NewRentalItem(createMovieId(), Duration.ofDays(5))
+        every { inventory.rentMovies(any()) } returns Either.right(
+            Rental(
+                copies = listOf(
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = rentalItem.movieId,
+                        movieReleaseDate = LocalDate.of(2015, Month.JULY, 23)
+                    )
+                ).k()
+            )
+        )
+        val rental = NewRental(listOf(rentalItem).k())
+
+        // when
+        rentals.newRental(rental)
+
+        // then
+        val allRepoRentals = rentalsRepository.getAll()
+        allRepoRentals shouldHaveSingleElement {
+            it.startDate == currentTime.toLocalDate() && it.items.size == 1
+        }
+    }
+
+    "should return error when cannot save rental in the repository" {
+        // given
+        val error = RuntimeException("Repository error")
+        val failingRepo = FailingRentalsRepository { error }
+        val inventory = mockk<Inventory>()
+        val rentals = createRentals(inventory, createRentalsService(rentalsRepository = failingRepo))
+        val rentalItem = NewRentalItem(createMovieId(), Duration.ofDays(2))
+        every { inventory.rentMovies(any()) } returns Either.right(
+            Rental(
+                copies = listOf(
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = rentalItem.movieId,
+                        movieReleaseDate = LocalDate.of(2019, Month.NOVEMBER, 13)
+                    )
+                ).k()
+            )
+        )
+        val rental = NewRental(listOf(rentalItem).k())
+
+        // when
+        val result = rentals.newRental(rental)
+
+        // then
+        result shouldBeLeft ErrorCreatingRental(error)
     }
 })
 

@@ -5,6 +5,8 @@ import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.filterOrOther
 import arrow.core.getOrElse
+import pl.michalperlak.videorental.common.util.executeAndHandle
+import pl.michalperlak.videorental.common.util.executeForEither
 import pl.michalperlak.videorental.inventory.application.MovieRentalService
 import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
 import pl.michalperlak.videorental.inventory.domain.MovieCopyId
@@ -21,8 +23,6 @@ import pl.michalperlak.videorental.inventory.mapper.asDto
 import pl.michalperlak.videorental.inventory.mapper.createMovie
 import pl.michalperlak.videorental.inventory.mapper.createMovieCopy
 import pl.michalperlak.videorental.inventory.mapper.toRentalItem
-import pl.michalperlak.videorental.inventory.util.executeAndHandle
-import pl.michalperlak.videorental.inventory.util.executeForEither
 import pl.michalperlak.videorental.inventory.util.flatMapOption
 import java.time.Clock
 import java.time.Instant
