@@ -1,6 +1,6 @@
 package pl.michalperlak.videorental.pricing.classification
 
-import pl.michalperlak.videorental.pricing.api.MovieType
+import pl.michalperlak.videorental.common.domain.MovieType
 import java.time.Clock
 import java.time.LocalDate
 import java.time.Period

@@ -11,6 +11,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import pl.michalperlak.videorental.common.events.rentals.NewRentalCreated
 import pl.michalperlak.videorental.inventory.Inventory
 import pl.michalperlak.videorental.inventory.dto.Rental
 import pl.michalperlak.videorental.inventory.dto.RentedCopy
@@ -75,8 +76,13 @@ class CreateNewRentalSpec : StringSpec({
         val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
         val inventory = mockk<Inventory>()
         val rentals = createRentals(
-            inventory,
-            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC))
+            inventory = inventory,
+            rentalsService = createRentalsService(
+                clock = Clock.fixed(
+                    currentTime.toInstant(ZoneOffset.UTC),
+                    ZoneOffset.UTC
+                )
+            )
         )
         val oldMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(5))
         val regularMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(4))
@@ -118,8 +124,13 @@ class CreateNewRentalSpec : StringSpec({
         val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
         val inventory = mockk<Inventory>()
         val rentals = createRentals(
-            inventory,
-            createRentalsService(clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC))
+            inventory = inventory,
+            rentalsService = createRentalsService(
+                clock = Clock.fixed(
+                    currentTime.toInstant(ZoneOffset.UTC),
+                    ZoneOffset.UTC
+                )
+            )
         )
         val oldMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(7))
         val regularMovieItem = NewRentalItem(createMovieId(), Duration.ofDays(4))
@@ -164,8 +175,8 @@ class CreateNewRentalSpec : StringSpec({
         val currentTime = LocalDateTime.of(2020, Month.JUNE, 29, 0, 0)
         val inventory = mockk<Inventory>()
         val rentals = createRentals(
-            inventory,
-            createRentalsService(
+            inventory = inventory,
+            rentalsService = createRentalsService(
                 rentalsRepository = rentalsRepository,
                 clock = Clock.fixed(currentTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC)
             )
@@ -199,7 +210,10 @@ class CreateNewRentalSpec : StringSpec({
         val error = RuntimeException("Repository error")
         val failingRepo = FailingRentalsRepository { error }
         val inventory = mockk<Inventory>()
-        val rentals = createRentals(inventory, createRentalsService(rentalsRepository = failingRepo))
+        val rentals = createRentals(
+            inventory = inventory,
+            rentalsService = createRentalsService(rentalsRepository = failingRepo)
+        )
         val rentalItem = NewRentalItem(createMovieId(), Duration.ofDays(2))
         every { inventory.rentMovies(any()) } returns Either.right(
             Rental(
@@ -219,5 +233,35 @@ class CreateNewRentalSpec : StringSpec({
 
         // then
         result shouldBeLeft ErrorCreatingRental(error)
+    }
+
+    "should publish event when rental created" {
+        // given
+        val inventory = mockk<Inventory>()
+        val events = EventsCollector()
+        val rentals = createRentals(inventory = inventory, events = events)
+        val rentalItem = NewRentalItem(createMovieId(), Duration.ofDays(10))
+        every { inventory.rentMovies(any()) } returns Either.right(
+            Rental(
+                copies = listOf(
+                    RentedCopy(
+                        copyId = createCopyId(),
+                        movieId = rentalItem.movieId,
+                        movieReleaseDate = LocalDate.of(2015, Month.JULY, 23)
+                    )
+                ).k()
+            )
+        )
+        val customerId = createCustomerId()
+        val rental = NewRental(customerId, listOf(rentalItem).k())
+
+        // when
+        rentals.newRental(rental)
+
+        // then
+        val publishedEvents = events.getCollected()
+        publishedEvents shouldHaveSingleElement {
+            it is NewRentalCreated && it.items.size == 1 && it.customerId == customerId
+        }
     }
 })

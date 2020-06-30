@@ -7,6 +7,8 @@ val moneyApiVersion: String by project
 val kotestVersion: String by project
 
 dependencies {
+    implementation(project(":video-rental-common"))
+
     implementation(kotlin("stdlib"))
     implementation("io.arrow-kt", "arrow-core", arrowVersion)
     implementation("org.javamoney", "moneta", moneyApiVersion)

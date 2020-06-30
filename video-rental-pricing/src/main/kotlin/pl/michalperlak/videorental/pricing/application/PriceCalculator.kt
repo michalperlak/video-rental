@@ -1,6 +1,6 @@
 package pl.michalperlak.videorental.pricing.application
 
-import pl.michalperlak.videorental.pricing.api.MovieType
+import pl.michalperlak.videorental.common.domain.MovieType
 import pl.michalperlak.videorental.pricing.api.Price
 import pl.michalperlak.videorental.pricing.api.Rental
 import pl.michalperlak.videorental.pricing.api.RentalItem

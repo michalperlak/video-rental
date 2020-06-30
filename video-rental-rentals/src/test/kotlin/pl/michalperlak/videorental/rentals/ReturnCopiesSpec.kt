@@ -88,7 +88,7 @@ class ReturnCopiesSpec : StringSpec({
         every { inventory.returnCopies(any()) } returns Either.right(Unit)
         val rentalDate = LocalDate.of(2020, Month.JUNE, 20)
         val clock = MutableClock(rentalDate)
-        val rentals = createRentals(inventory, createRentalsService(clock = clock))
+        val rentals = createRentals(inventory = inventory, rentalsService = createRentalsService(clock = clock))
         val copyId = createCopyId()
         val copies = listOf(copyId).k()
         val rentalId = addRental(copies, inventory, rentals, Duration.ofDays(3))
@@ -113,8 +113,12 @@ class ReturnCopiesSpec : StringSpec({
         val inventory = mockk<Inventory>()
         every { inventory.returnCopies(any()) } returns Either.right(Unit)
         val currentDate = LocalDate.of(2020, Month.JUNE, 29)
-        val rentals = createRentals(inventory, createRentalsService(
-            returnsRepository = returnsRepo, clock = MutableClock(currentDate)))
+        val rentals = createRentals(
+            inventory = inventory,
+            rentalsService = createRentalsService(
+                returnsRepository = returnsRepo, clock = MutableClock(currentDate)
+            )
+        )
         val copyId = createCopyId()
         val copies = listOf(copyId).k()
         val rentalId = addRental(copies, inventory, rentals)
@@ -134,7 +138,10 @@ class ReturnCopiesSpec : StringSpec({
         val error = IOException("Repository error")
         val failingRepo = FailingReturnsRepository { error }
         val inventory = mockk<Inventory>()
-        val rentals = createRentals(inventory, createRentalsService(returnsRepository = failingRepo))
+        val rentals = createRentals(
+            inventory = inventory,
+            rentalsService = createRentalsService(returnsRepository = failingRepo)
+        )
         val copies = listOf(createCopyId()).k()
         val rentalId = addRental(copies, inventory, rentals)
 

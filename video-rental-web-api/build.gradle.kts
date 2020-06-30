@@ -13,6 +13,8 @@ val restAssuredVersion: String by project
 dependencies {
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
+    implementation(project(":video-rental-common"))
+    implementation(project(":video-rental-bonuses"))
     implementation(project(":video-rental-pricing"))
     implementation(project(":video-rental-inventory"))
     implementation(project(":video-rental-rentals"))

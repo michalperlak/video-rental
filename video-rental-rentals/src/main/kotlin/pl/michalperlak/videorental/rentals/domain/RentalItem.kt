@@ -1,6 +1,6 @@
 package pl.michalperlak.videorental.rentals.domain
 
-import pl.michalperlak.videorental.pricing.api.MovieType
+import pl.michalperlak.videorental.common.domain.MovieType
 import pl.michalperlak.videorental.pricing.api.Price
 import java.time.Duration
 

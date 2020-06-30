@@ -4,6 +4,7 @@ import arrow.core.k
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldHaveSize
+import pl.michalperlak.videorental.common.domain.MovieType
 import java.time.Duration
 
 class RentalSpec : StringSpec({

@@ -3,7 +3,6 @@ package pl.michalperlak.videorental.web.rentals
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.spring.SpringListener
-import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
@@ -13,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import pl.michalperlak.videorental.web.inventory.addMovie
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -72,7 +70,7 @@ class ReturnCopiesSpec : StringSpec() {
         }
 
         "should return summary with additional charges when items returned successfully" {
-            val (rentalId, copyId) = addRental()
+            val (rentalId, copyId) = addRental(port)
             Given {
                 port(port)
                 body(
@@ -88,30 +86,6 @@ class ReturnCopiesSpec : StringSpec() {
                 body(containsString("delayCharge"))
             }
         }
-    }
-
-    private fun addRental(): Pair<String, String> {
-        val movieId = addMovie(port, """ { "title": "Test movie", "releaseDate": "2020-05-12" }""")
-        val copyId = addCopy(port, movieId)
-        return Given {
-            port(port)
-            body(
-                """
-                    {
-                        "customerId": "${UUID.randomUUID()}",
-                         "items": [
-                            { "movieId": "$movieId", "days": 2 }
-                        ]
-                    }
-                """.trimIndent()
-            )
-            header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        } When {
-            post(RentalsController.RENTALS_PATH)
-        } Extract {
-            header(HttpHeaders.LOCATION)
-                .substringAfter(RentalsController.RENTALS_PATH + "/")
-        } to copyId
     }
 
     override fun listeners(): List<TestListener> = listOf(SpringListener)

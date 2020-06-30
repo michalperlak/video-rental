@@ -6,6 +6,8 @@ import arrow.core.getOrElse
 import arrow.core.k
 import io.mockk.every
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import pl.michalperlak.videorental.common.events.Events
+import pl.michalperlak.videorental.common.events.infr.InMemoryEventBus
 import pl.michalperlak.videorental.inventory.Inventory
 import pl.michalperlak.videorental.inventory.dto.Rental
 import pl.michalperlak.videorental.inventory.dto.RentedCopy
@@ -47,9 +49,11 @@ internal fun createRentalsService(
 
 internal fun createRentals(
     inventory: Inventory,
-    rentalsService: RentalService = createRentalsService()
+    clock: Clock = Clock.systemUTC(),
+    rentalsService: RentalService = createRentalsService(clock = clock),
+    events: Events = InMemoryEventBus()
 ): Rentals =
-    RentalsFacade(inventory, rentalsService)
+    RentalsFacade(inventory, rentalsService, events, clock)
 
 internal fun addRental(
     copies: ListK<String>, inventory: Inventory,
