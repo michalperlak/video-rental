@@ -113,7 +113,8 @@ class ReturnCopiesSpec : StringSpec({
         val inventory = mockk<Inventory>()
         every { inventory.returnCopies(any()) } returns Either.right(Unit)
         val currentDate = LocalDate.of(2020, Month.JUNE, 29)
-        val rentals = createRentals(inventory, createRentalsService(returnsRepository = returnsRepo))
+        val rentals = createRentals(inventory, createRentalsService(
+            returnsRepository = returnsRepo, clock = MutableClock(currentDate)))
         val copyId = createCopyId()
         val copies = listOf(copyId).k()
         val rentalId = addRental(copies, inventory, rentals)
