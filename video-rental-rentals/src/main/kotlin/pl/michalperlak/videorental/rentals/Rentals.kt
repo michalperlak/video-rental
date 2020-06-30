@@ -2,6 +2,7 @@ package pl.michalperlak.videorental.rentals
 
 import arrow.core.Either
 import arrow.core.ListK
+import pl.michalperlak.videorental.common.events.Events
 import pl.michalperlak.videorental.inventory.Inventory
 import pl.michalperlak.videorental.pricing.Prices
 import pl.michalperlak.videorental.pricing.classification.MovieClassificationPolicy
@@ -24,6 +25,7 @@ interface Rentals {
             prices: Prices,
             movieClassificationPolicy: MovieClassificationPolicy,
             inventory: Inventory,
+            events: Events,
             clock: Clock
         ): Rentals =
             RentalsFacade(
@@ -34,7 +36,9 @@ interface Rentals {
                     returnsRepository = InMemoryReturnsRepository(),
                     rentalsRepository = InMemoryRentalsRepository(),
                     clock = clock
-                )
+                ),
+                events = events,
+                clock = clock
             )
     }
 }
