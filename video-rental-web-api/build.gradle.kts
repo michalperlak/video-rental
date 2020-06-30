@@ -6,6 +6,7 @@ plugins {
 }
 
 val arrowVersion: String by project
+val swaggerVersion: String by project
 val h2Version: String by project
 val kotestVersion: String by project
 val restAssuredVersion: String by project
@@ -24,6 +25,8 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-web")
     implementation("org.springframework.boot", "spring-boot-starter-jdbc")
     implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
+    implementation("io.springfox", "springfox-swagger2", swaggerVersion)
+    implementation("io.springfox", "springfox-swagger-ui", swaggerVersion)
     implementation("com.h2database", "h2", h2Version)
     implementation("com.zaxxer", "HikariCP")
     implementation("org.flywaydb", "flyway-core")
