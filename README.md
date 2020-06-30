@@ -49,7 +49,7 @@ The main ones include:
  - security has been skipped
  - infrastructure part has been skipped - only the inventory module uses database and flyway for migrations(but it is still the H2 in memory), other
  modules just use simple in memory implementations
- - event publishing and subscribing - the implementation is fully in memory and does not handle corner cases
+ - event publishing and subscribing - the implementation is fully in memory and does not handle corner cases, also it is currently synchronous
  - prices currently are just numbers and does not handle currencies
  - error handling and dependencies between modules - for prod implementation all the important scenarios when multiple things can fail in
  different modules should be carefully analyzed and handled(for example inventory errors during rental)
