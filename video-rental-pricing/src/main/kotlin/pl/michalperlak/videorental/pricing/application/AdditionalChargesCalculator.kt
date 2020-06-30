@@ -1,8 +1,8 @@
 package pl.michalperlak.videorental.pricing.application
 
+import pl.michalperlak.videorental.common.domain.MovieType
 import pl.michalperlak.videorental.pricing.api.DelayedReturn
 import pl.michalperlak.videorental.pricing.api.LateReturnedItem
-import pl.michalperlak.videorental.pricing.api.MovieType
 import pl.michalperlak.videorental.pricing.api.Price
 
 internal class AdditionalChargesCalculator(

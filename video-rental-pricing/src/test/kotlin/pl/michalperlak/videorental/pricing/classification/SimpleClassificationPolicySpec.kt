@@ -2,7 +2,7 @@ package pl.michalperlak.videorental.pricing.classification
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import pl.michalperlak.videorental.pricing.api.MovieType
+import pl.michalperlak.videorental.common.domain.MovieType
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
