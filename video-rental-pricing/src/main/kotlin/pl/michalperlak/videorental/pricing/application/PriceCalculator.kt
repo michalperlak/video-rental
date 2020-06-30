@@ -1,9 +1,9 @@
 package pl.michalperlak.videorental.pricing.application
 
-import pl.michalperlak.videorental.pricing.domain.MovieType
-import pl.michalperlak.videorental.pricing.domain.Price
-import pl.michalperlak.videorental.pricing.domain.Rental
-import pl.michalperlak.videorental.pricing.domain.RentalItem
+import pl.michalperlak.videorental.pricing.api.MovieType
+import pl.michalperlak.videorental.pricing.api.Price
+import pl.michalperlak.videorental.pricing.api.Rental
+import pl.michalperlak.videorental.pricing.api.RentalItem
 import kotlin.math.max
 
 internal class PriceCalculator(

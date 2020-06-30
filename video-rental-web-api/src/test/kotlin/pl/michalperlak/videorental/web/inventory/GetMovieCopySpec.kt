@@ -14,6 +14,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import pl.michalperlak.videorental.inventory.dto.MovieCopy
+import pl.michalperlak.videorental.web.util.extractBody
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)

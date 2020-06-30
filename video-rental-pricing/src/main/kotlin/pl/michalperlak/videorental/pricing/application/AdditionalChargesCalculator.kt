@@ -1,9 +1,9 @@
 package pl.michalperlak.videorental.pricing.application
 
-import pl.michalperlak.videorental.pricing.domain.DelayedReturn
-import pl.michalperlak.videorental.pricing.domain.LateReturnedItem
-import pl.michalperlak.videorental.pricing.domain.MovieType
-import pl.michalperlak.videorental.pricing.domain.Price
+import pl.michalperlak.videorental.pricing.api.DelayedReturn
+import pl.michalperlak.videorental.pricing.api.LateReturnedItem
+import pl.michalperlak.videorental.pricing.api.MovieType
+import pl.michalperlak.videorental.pricing.api.Price
 
 internal class AdditionalChargesCalculator(
     private val regularDelayFeeBase: Price,

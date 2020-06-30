@@ -3,9 +3,9 @@ package pl.michalperlak.videorental.pricing.application
 import arrow.core.ListK
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import pl.michalperlak.videorental.pricing.domain.DelayedReturn
-import pl.michalperlak.videorental.pricing.domain.LateReturnedItem
-import pl.michalperlak.videorental.pricing.domain.MovieType
+import pl.michalperlak.videorental.pricing.api.DelayedReturn
+import pl.michalperlak.videorental.pricing.api.LateReturnedItem
+import pl.michalperlak.videorental.pricing.api.MovieType
 import java.time.Duration
 
 class AdditionalChargesCalculationsSpec : StringSpec({

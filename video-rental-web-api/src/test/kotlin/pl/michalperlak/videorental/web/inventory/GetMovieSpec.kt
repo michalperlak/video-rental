@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.web.server.LocalServerPort
 import pl.michalperlak.videorental.inventory.dto.Movie
+import pl.michalperlak.videorental.web.util.extractBody
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)

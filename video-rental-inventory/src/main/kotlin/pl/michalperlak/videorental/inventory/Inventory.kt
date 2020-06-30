@@ -12,6 +12,7 @@ import pl.michalperlak.videorental.inventory.dto.Rental
 import pl.michalperlak.videorental.inventory.error.MovieAddingError
 import pl.michalperlak.videorental.inventory.error.MovieCopyAddingError
 import pl.michalperlak.videorental.inventory.error.RentalInventoryError
+import pl.michalperlak.videorental.inventory.error.ReturnError
 
 interface Inventory {
     fun addMovie(newMovie: NewMovie): Either<MovieAddingError, Movie>
@@ -19,4 +20,5 @@ interface Inventory {
     fun addNewCopy(newMovieCopy: NewMovieCopy): Either<MovieCopyAddingError, MovieCopy>
     fun getCopy(copyId: String): Option<MovieCopy>
     fun rentMovies(movies: ListK<MovieToRent>): Either<RentalInventoryError, Rental>
+    fun returnCopies(movieCopyIds: ListK<String>): Either<ReturnError, Unit>
 }

@@ -1,10 +1,15 @@
 package pl.michalperlak.videorental.inventory
 
 import arrow.core.Either
+import arrow.core.Either.Companion.left
+import arrow.core.Either.Companion.right
 import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.filterOrOther
 import arrow.core.getOrElse
+import arrow.core.k
+import pl.michalperlak.videorental.common.util.executeAndHandle
+import pl.michalperlak.videorental.common.util.executeForEither
 import pl.michalperlak.videorental.inventory.application.MovieRentalService
 import pl.michalperlak.videorental.inventory.domain.MovieCopiesRepository
 import pl.michalperlak.videorental.inventory.domain.MovieCopyId
@@ -21,11 +26,10 @@ import pl.michalperlak.videorental.inventory.mapper.asDto
 import pl.michalperlak.videorental.inventory.mapper.createMovie
 import pl.michalperlak.videorental.inventory.mapper.createMovieCopy
 import pl.michalperlak.videorental.inventory.mapper.toRentalItem
-import pl.michalperlak.videorental.inventory.util.executeAndHandle
-import pl.michalperlak.videorental.inventory.util.executeForEither
 import pl.michalperlak.videorental.inventory.util.flatMapOption
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 
 internal class InventoryFacade(
     private val moviesRepository: MoviesRepository,
@@ -69,7 +73,7 @@ internal class InventoryFacade(
         executeAndHandle({
             movieRentalService
                 .rent(movies.flatMapOption(MovieToRent::toRentalItem))
-                .asDto()
+                .asDto { movieReleaseDate(it) }
         }, errorHandler = {
             when (it) {
                 is CopiesNotAvailableException -> CopiesNotAvailable(it.movieId)
@@ -77,18 +81,45 @@ internal class InventoryFacade(
             }
         })
 
+    override fun returnCopies(movieCopyIds: ListK<String>): Either<ReturnError, Unit> =
+        executeForEither({
+            val returnedCopies = movieRentalService.returnCopies(movieCopyIds.flatMapOption { MovieCopyId.from(it) })
+            if (returnedCopies.size != movieCopyIds.size) {
+                left(UnknownCopies(notReturnedCopies(movieCopyIds, returnedCopies)))
+            } else {
+                right(Unit)
+            }
+        }, errorHandler = {
+            ErrorReturningCopies(it)
+        })
+
     private fun registerMovie(newMovie: NewMovie): Either<MovieAddingError, Movie> =
-        Either.right(
+        right(
             moviesRepository
                 .addMovie(newMovie.createMovie(movieId = MovieId.generate()))
                 .asDto()
         )
 
     private fun movieAlreadyRegistered(movieId: MovieId): Either<MovieAddingError, Movie> =
-        Either.left(MovieAlreadyExists(movieId.toString()))
+        left(MovieAlreadyExists(movieId.toString()))
 
     private fun movieExists(movieId: MovieId): Boolean =
         moviesRepository
             .findById(movieId)
             .isDefined()
+
+    private fun movieReleaseDate(movieId: MovieId): LocalDate =
+        moviesRepository
+            .findById(movieId)
+            .map { it.releaseDate }
+            .getOrElse { throw IllegalStateException("Movie not found: $movieId") }
+
+    private fun notReturnedCopies(requestedIds: ListK<String>, returned: ListK<MovieCopyId>): ListK<String> {
+        val returnedIds = returned
+            .map { it.toString() }
+            .toSet()
+        return requestedIds
+            .filter { !returnedIds.contains(it) }
+            .k()
+    }
 }

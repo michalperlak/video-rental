@@ -1,6 +1,6 @@
 package pl.michalperlak.videorental.pricing.application
 
-import pl.michalperlak.videorental.pricing.domain.Price
+import pl.michalperlak.videorental.pricing.api.Price
 
 internal val BASE_PREMIUM_PRICE = Price.of(40)
 internal val BASE_REGULAR_PRICE = Price.of(30)
