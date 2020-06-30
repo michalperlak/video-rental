@@ -13,44 +13,90 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import pl.michalperlak.videorental.web.inventory.MovieCopiesController
 import pl.michalperlak.videorental.web.inventory.addMovie
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-class CreateRentalSpec : StringSpec() {
+class ReturnCopiesSpec : StringSpec() {
 
     @LocalServerPort
     private var port: Int = 0
 
     init {
-        "should return bad request status when rental data is incomplete" {
+        "should return bad request when rental id not provided" {
             Given {
                 port(port)
                 body(
                     """
-                    {
-                        "customerId": "${UUID.randomUUID()}",
-                         "items": [
-                            { "movieId": "f8579e3a-7f20-44c2-a2af-eeee5a59c19b" }
-                        ]
-                    }
+                    { "copies": ["${UUID.randomUUID()}"] }
                 """.trimIndent()
                 )
                 header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             } When {
-                post(RentalsController.RENTALS_PATH)
+                post(ReturnsController.RETURNS_PATH)
             } Then {
                 statusCode(400)
             }
         }
 
-        "should return client error when movie is not available for rent" {
-            val movieId = addMovie(port, """ { "title": "Test movie", "releaseDate": "2020-05-12" }""")
+        "should return bad request when copies to return not provided" {
             Given {
                 port(port)
                 body(
                     """
+                    { "rentalId": "${UUID.randomUUID()}" }
+                """.trimIndent()
+                )
+                header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            } When {
+                post(ReturnsController.RETURNS_PATH)
+            } Then {
+                statusCode(400)
+            }
+        }
+
+        "should return not found status when rental does not exist" {
+            Given {
+                port(port)
+                body(
+                    """
+                    { "rentalId": "${UUID.randomUUID()}", "copies": ["${UUID.randomUUID()}"] }
+                """.trimIndent()
+                )
+                header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            } When {
+                post(ReturnsController.RETURNS_PATH)
+            } Then {
+                statusCode(404)
+            }
+        }
+
+        "should return summary with additional charges when items returned successfully" {
+            val (rentalId, copyId) = addRental()
+            Given {
+                port(port)
+                body(
+                    """
+                    { "rentalId": "$rentalId", "copies": ["$copyId"] }
+                """.trimIndent()
+                )
+                header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            } When {
+                post(ReturnsController.RETURNS_PATH)
+            } Then {
+                statusCode(200)
+                body(containsString("delayCharge"))
+            }
+        }
+    }
+
+    private fun addRental(): Pair<String, String> {
+        val movieId = addMovie(port, """ { "title": "Test movie", "releaseDate": "2020-05-12" }""")
+        val copyId = addCopy(port, movieId)
+        return Given {
+            port(port)
+            body(
+                """
                     {
                         "customerId": "${UUID.randomUUID()}",
                          "items": [
@@ -58,57 +104,15 @@ class CreateRentalSpec : StringSpec() {
                         ]
                     }
                 """.trimIndent()
-                )
-                header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            } When {
-                post(RentalsController.RENTALS_PATH)
-            } Then {
-                statusCode(400)
-            }
-        }
-
-        "should return ok status with rental data when rental created" {
-            val movieId = addMovie(port, """ { "title": "Test movie", "releaseDate": "2020-05-12" }""")
-            repeat(2) {
-                addCopy(movieId)
-            }
-            Given {
-                port(port)
-                body(
-                    """
-                    {
-                        "customerId": "${UUID.randomUUID()}",
-                         "items": [
-                            { "movieId": "$movieId", "days": 2 },
-                            { "movieId": "$movieId", "days": 10 }
-                        ]
-                    }
-                """.trimIndent()
-                )
-                header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            } When {
-                post(RentalsController.RENTALS_PATH)
-            } Then {
-                statusCode(200)
-                body(containsString("totalPrice"))
-                body(containsString("items"))
-                body(containsString("startDate"))
-                body(containsString("rentalId"))
-            }
-        }
-    }
-
-    private fun addCopy(movieId: String): String =
-        Given {
-            port(port)
-            body(""" { "movieId": "$movieId" }""")
+            )
             header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         } When {
-            post(MovieCopiesController.MOVIE_COPIES_PATH)
+            post(RentalsController.RENTALS_PATH)
         } Extract {
             header(HttpHeaders.LOCATION)
-                .substringAfter(MovieCopiesController.MOVIE_COPIES_PATH + "/")
-        }
+                .substringAfter(RentalsController.RENTALS_PATH + "/")
+        } to copyId
+    }
 
     override fun listeners(): List<TestListener> = listOf(SpringListener)
 }
